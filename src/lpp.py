@@ -35,6 +35,8 @@ class lpp:
     self.cpunum      = multiprocessing.cpu_count()
     self.chunksize   = 8
     self.overwrite   = True
+    self.Nth = 1
+    self.timesteps = "all"
 
     if "--chunksize" in kwargs: 
       try:
@@ -43,6 +45,22 @@ class lpp:
         else: raise ValueError
       except ValueError:
         raise ValueError, "Invalid or no argument given for chunksize"
+
+    if "--Nth" in kwargs:
+      try:
+        if int(kwargs["--Nth"]) > 0 and int(kwargs["--Nth"]) >= self.Nth:
+          self.Nth = int(kwargs["--Nth"])
+        else: raise ValueError
+      except ValueError:
+        raise ValueError, "Invalid or no argument given for Nth"
+
+    if "--timesteps" in kwargs:
+      try:
+        #if int(kwargs["--timesteps"]) > 0 and int(kwargs["--timesteps"]) >= self.timesteps:
+          self.timesteps = kwargs["--timesteps"]
+        #else: raise ValueError
+      except ValueError:
+        raise ValueError, "Invalid or no argument given for timesteps"
 
     if "--cpunum" in kwargs: 
       try:
@@ -109,7 +127,9 @@ class lpp:
     dumpInput = [{"filelist":self.slices[i],\
       "debugMode":self.debugMode,\
       "output":output,\
-      "overwrite":self.overwrite} \
+      "overwrite":self.overwrite, \
+      "timesteps":self.timesteps, \
+      "Nth":self.Nth} \
       for i in xrange(len(self.slices))]
     
     if self.debugMode: print "dumpInput:",dumpInput
@@ -144,6 +164,8 @@ def lppWorker(input):
   debugMode = input["debugMode"]
   outfileName = input["output"]
   overwrite = input["overwrite"]
+  Nth = input["Nth"]
+  timesteps = input["timesteps"]
   
   flistlen = len(flist)
   # generate name of manyGran
@@ -184,6 +206,20 @@ def lppWorker(input):
   # call dump, vtk, manyGran on shortFlist
   try:
     d = dump({"filelist":shortFlist, "debugMode":debugMode})
+    if timesteps != "all":
+	    tsteps = timesteps.split(",")
+	    filterstring = ""
+	    j = 1
+	    for i in tsteps:
+	        if j == 1:
+		        filterstring = filterstring + "$t == " + str(i)
+		else:
+			filterstring = filterstring + " or $t == " + str(i)
+		j = j + 1
+	    d.tselect.test(filterstring)
+    elif Nth != 1:
+	    d.tselect.skip(Nth)
+    d.delete()
     v = vtk.vtk(d)
     if debugMode: print "\nfileNums: ",d.fileNums,"\n"
     v.manyGran(granName,fileNos=d.fileNums,output=debugMode)
@@ -202,12 +238,14 @@ def printHelp():
     "is the amout of cpu cores avaliable at your system"
   print "--help      : writes this help message and exits"
   print "--no-overwrite: disables overwriting of already post-processed files."
+  print "--timesteps: time steps to be converted, input as comma seperated list."
+  print "--Nth: every Nth time step will be converted, cannot be combined with timesteps."
   print "For details, read README_GRANULAR.txt"
 
 if __name__ == "__main__":
   if len(sys.argv) > 1:
     # parse options
-    optlist, args = getopt.gnu_getopt(sys.argv[1:],'o:',['chunksize=','cpunum=','debug','help','quiet','no-overwrite'])
+    optlist, args = getopt.gnu_getopt(sys.argv[1:],'o:',['chunksize=','cpunum=','Nth=','timesteps=','debug','help','quiet','no-overwrite'])
     optdict = dict(optlist)
     if "--help" in optdict:
       printHelp()

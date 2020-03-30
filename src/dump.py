@@ -445,6 +445,7 @@ class dump:
     ndel = i = 0
     while i < self.nsnaps:
       if not self.snaps[i].tselect:
+	del self.fileNums[i]
         del self.snaps[i]
         self.nsnaps -= 1
         ndel += 1
