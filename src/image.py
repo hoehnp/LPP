@@ -48,9 +48,9 @@ i.montage("-geometry 512x512","i*.png","new.png")       1st arg is switch
 
 # Imports and external programs
 
-import sys, os, commands, re, glob
+import sys, os, subprocess, re, glob
 from math import *
-from Tkinter import *
+from tkinter import *
 import Pmw
 import Image,ImageTk
 
@@ -77,7 +77,7 @@ class image:
     list = str.split(filestr)
     files = []
     for file in list: files += glob.glob(file)
-    if len(files) == 0: raise StandardError, "no image files to load"
+    if len(files) == 0: raise Exception("no image files to load")
 
     # grab Tk instance from main
 
@@ -93,7 +93,7 @@ class image:
     pane = scroll.interior()
     
     ncolumns = 4
-    for i in xrange(len(files)):
+    for i in range(len(files)):
       
       # create new row frame if 1st in column
       
@@ -134,7 +134,7 @@ class image:
   def convert(self,file1,file2,switch=""):
     if file1.find('*') < 0 or file2.find('*') < 0:
       cmd = "%s %s %s %s" % (PIZZA_CONVERT,switch,file1,file2)
-      commands.getoutput(cmd)
+      subprocess.getoutput(cmd)
       return
 
     index = file1.index('*')
@@ -150,23 +150,23 @@ class image:
       middle = re.search(expr,file1).group(1)
       file2 = "%s%s%s" % (pre2,middle,post2)
       cmd = "%s %s %s %s" % (PIZZA_CONVERT,switch,file1,file2)
-      print middle,
+      print(middle, end=' ')
       sys.stdout.flush()
-      commands.getoutput(cmd)
-    print
+      subprocess.getoutput(cmd)
+    print()
 
   # --------------------------------------------------------------------
   # wrapper on ImageMagick montage command
 
   def montage(self,switch,*fileargs):
     nsets = len(fileargs)
-    if nsets < 2: raise StandardError,"montage requires 2 or more file args"
+    if nsets < 2: raise Exception("montage requires 2 or more file args")
 
     for i in range(nsets):
       if fileargs[i].find('*') < 0:
         cmd = "%s %s" % (PIZZA_MONTAGE,switch)
         for j in range(nsets): cmd += " %s" % fileargs[j]
-        commands.getoutput(cmd)
+        subprocess.getoutput(cmd)
         return
     
     nfiles = len(glob.glob(fileargs[0]))
@@ -174,7 +174,7 @@ class image:
     for i in range(nsets-1):
       filesets.append(glob.glob(fileargs[i]))
       if len(filesets[-1]) != nfiles:
-        raise StandardError,"each montage arg must represent equal # of files"
+        raise Exception("each montage arg must represent equal # of files")
 
     index = fileargs[0].index('*')
     pre1 = fileargs[0][:index]
@@ -190,10 +190,10 @@ class image:
       middle = re.search(expr,filesets[0][i]).group(1)
       fileN = "%s%s%s" % (preN,middle,postN)
       cmd += " %s" % fileN
-      commands.getoutput(cmd)
-      print middle,
+      subprocess.getoutput(cmd)
+      print(middle, end=' ')
       sys.stdout.flush()
-    print
+    print()
 
 # --------------------------------------------------------------------
 # thumbnail class

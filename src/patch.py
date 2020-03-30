@@ -98,8 +98,8 @@ class patch:
     if style == "linebox" or style == "linetri": self.style = "line"
     if style == "tritet" or style == "tribox": self.style = "tri"
     cmd = "atoms,bonds,tris,segments,volume = self.%s(*types)" % style
-    for i in xrange(n):
-      exec cmd
+    for i in range(n):
+      exec(cmd)
       self.molecules.append([atoms,bonds,tris,segments])
       self.volume += volume
 
@@ -131,7 +131,7 @@ class patch:
       latflag = 1
       if self.lattice[0]*self.lattice[1]*self.lattice[2] != \
              len(self.molecules):
-        raise StandardError,"lattice inconsistent with # of molecules"
+        raise Exception("lattice inconsistent with # of molecules")
     else: latflag = 0
 
     idatom = idbond = idtri = idmol = 0
@@ -343,7 +343,7 @@ class patch:
     if self.lattice[0] or self.lattice[1]:
       latflag = 1
       if self.lattice[0]*self.lattice[1] != len(self.molecules):
-        raise StandardError,"lattice inconsistent with # of molecules"
+        raise Exception("lattice inconsistent with # of molecules")
     else: latflag = 0
     
     idatom = idbond = idmol = 0
@@ -885,7 +885,7 @@ class patch:
     sep = params[1]
     type = params[2]
     if n % 2 == 0:
-      raise StandardError, "N in patch::star2d is not odd"
+      raise Exception("N in patch::star2d is not odd")
     middle = n/2
     
     atoms = []

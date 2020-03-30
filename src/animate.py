@@ -47,8 +47,8 @@ a.delay(0.4)     	      set delay slider
 
 # Imports and external programs
 
-import sys, os, commands, re, glob
-from Tkinter import *
+import sys, os, subprocess, re, glob
+from tkinter import *
 from ImageTk import PhotoImage
 
 # Class definition
@@ -68,12 +68,12 @@ class animate:
     self.files = []
     for file in list: self.files += glob.glob(file)
     self.nframes = len(self.files)
-    if self.nframes == 0: raise StandardError, "No files to load"
+    if self.nframes == 0: raise Exception("No files to load")
 
     # load all images
     
     self.images = []
-    for i in xrange(self.nframes):
+    for i in range(self.nframes):
       self.images.append(PhotoImage(file=self.files[i]))
 
     # grab Tk instance from main

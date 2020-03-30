@@ -56,8 +56,8 @@ except: PIZZA_VMDARCH = "LINUX"
 
 try: import pexpect
 except: 
-  print "pexpect from http://pypi.python.org/pypi/pexpect", \
-      "is required for vmd tool"
+  print("pexpect from http://pypi.python.org/pypi/pexpect", \
+      "is required for vmd tool")
   raise
 
 # Class definition
@@ -103,7 +103,7 @@ class vmd:
       self.VMD.sendline(command)
       self.VMD.expect('vmd >')
       if self.debugme:
-        print "call+result:"+self.VMD.before
+        print("call+result:"+self.VMD.before)
     return
     
   # --------------------------------------------------------------------
@@ -121,9 +121,9 @@ class vmd:
   # turn on debugging info
   def debug(self,status=True):
     if status and not self.debugme:
-      print 'Turning vmd.py debugging ON.'
+      print('Turning vmd.py debugging ON.')
     if not status and self.debugme:
-      print 'Turning vmd.py debugging OFF.'
+      print('Turning vmd.py debugging OFF.')
     self.debugme = status
 
   # --------------------------------------------------------------------
@@ -133,16 +133,16 @@ class vmd:
     self.__call__('menu main on')
     while 1:
       try:
-        command = raw_input("vmd > ")
+        command = input("vmd > ")
       except EOFError:
-        print "(EOF)"
+        print("(EOF)")
         self.__call__('menu main off')
         return
       if command == "quit" or command == "exit":
         self.__call__('menu main off')
         return
       if command == "gopython":
-        print "gopython not supported here"
+        print("gopython not supported here")
         continue
       self.__call__(command)
 

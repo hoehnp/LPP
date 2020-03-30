@@ -68,7 +68,7 @@ class pair:
       self.init_func = self.init_lj_charmm_coul_charmm
       self.single_func = self.single_lj_charmm_coul_charmm
     else:
-      raise StandardError, "this pair style not yet supported"
+      raise Exception("this pair style not yet supported")
 
   # --------------------------------------------------------------------
   # generic coeff method
@@ -99,10 +99,10 @@ class pair:
     
     self.lj3 = []
     self.lj4 = []     
-    for i in xrange(ntypes):
+    for i in range(ntypes):
       self.lj3.append(ntypes * [0])
       self.lj4.append(ntypes * [0])
-      for j in xrange(ntypes):
+      for j in range(ntypes):
         epsilon_ij = sqrt(epsilon[i]*epsilon[j])
         sigma_ij = sqrt(sigma[i]*sigma[j])
         self.lj3[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,12.0);
@@ -143,10 +143,10 @@ class pair:
     
     self.lj3 = []
     self.lj4 = []     
-    for i in xrange(ntypes):
+    for i in range(ntypes):
       self.lj3.append(ntypes * [0])
       self.lj4.append(ntypes * [0])
-      for j in xrange(ntypes):
+      for j in range(ntypes):
         epsilon_ij = sqrt(epsilon[i]*epsilon[j])
         sigma_ij = sqrt(sigma[i]*sigma[j])
         self.lj3[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,12.0);
@@ -197,10 +197,10 @@ class pair:
     
     self.lj3 = []
     self.lj4 = []     
-    for i in xrange(ntypes):
+    for i in range(ntypes):
       self.lj3.append(ntypes * [0])
       self.lj4.append(ntypes * [0])
-      for j in xrange(ntypes):
+      for j in range(ntypes):
         epsilon_ij = sqrt(epsilon[i]*epsilon[j])
         sigma_ij = 0.5 * (sigma[i] + sigma[j])
         self.lj3[i][j] = 4.0 * epsilon_ij * pow(sigma_ij,12.0);

@@ -110,7 +110,7 @@ colors["nickname"] = [R,G,B]       set new RGB values from 0 to 255
 
 # Imports and external programs
 
-import sys, os, commands, re
+import sys, os, subprocess, re
 from vizinfo import vizinfo
 from math import fabs,atan,cos,sin
 
@@ -222,7 +222,7 @@ class raster:
 
     self.xtrans = self.ytrans = self.ztrans = 0.0
     output = self.single(1,self.file,box,atoms,bonds,tris,lines)
-    print output
+    print(output)
     nums = re.findall("translation to:\s*(\S*)\s*(\S*)\s*(\S*)\s",output)
     self.xtrans = float(nums[0][0])
     self.ytrans = float(nums[0][1])
@@ -230,7 +230,7 @@ class raster:
     
     self.single(0,self.file,box,atoms,bonds,tris,lines)
     cmd = "%s %s.png" % (PIZZA_DISPLAY,self.file)
-    commands.getoutput(cmd)
+    subprocess.getoutput(cmd)
 
   # --------------------------------------------------------------------
 
@@ -306,7 +306,7 @@ class raster:
           self.ztrans = float(nums[0][2])
 
         self.single(0,file,box,atoms,bonds,tris,lines)
-        print time,
+        print(time, end=' ')
         sys.stdout.flush()
         i += 1
         n += 1
@@ -353,11 +353,11 @@ class raster:
           self.ztrans = float(nums[0][2])
         
         self.single(0,file,box,atoms,bonds,tris,lines)
-        print n,
+        print(n, end=' ')
         sys.stdout.flush()
         n += 1
 
-    print "\n%d images" % ncount
+    print("\n%d images" % ncount)
 
   # --------------------------------------------------------------------
 
@@ -374,7 +374,7 @@ class raster:
              (self.xpixels,self.ypixels,color[0],color[1],color[2],
               self.eye,matrix,self.xtrans+xshift,self.ytrans+yshift,
               self.ztrans,1.6*self.distance/self.scale)
-    print >>f,header,
+    print(header, end=' ', file=f)
 
     # draw box if boxflag or flag is set
     # flag = 1 is a pre-call of single to set frame size correctly
@@ -385,53 +385,53 @@ class raster:
     ncolor = self.vizinfo.nacolor
     for atom in atoms:
       itype = int(atom[1])
-      if itype > ncolor: raise StandardError,"atom type too big"
+      if itype > ncolor: raise Exception("atom type too big")
       color = self.vizinfo.acolor[itype]
       rad = self.vizinfo.arad[itype]
-      print >>f,2
-      print >>f,atom[2],atom[3],atom[4],rad,color[0],color[1],color[2]
+      print(2, file=f)
+      print(atom[2],atom[3],atom[4],rad,color[0],color[1],color[2], file=f)
 
     # need to include vizinfo.tfill options
 
     ncolor = self.vizinfo.ntcolor
     for tri in tris:
       itype = int(tri[1])
-      if itype > ncolor: raise StandardError,"tri type too big"
+      if itype > ncolor: raise Exception("tri type too big")
       color = self.vizinfo.tcolor[itype]
-      print >>f,1
-      print >>f,tri[2],tri[3],tri[4],tri[5],tri[6],tri[7], \
-            tri[8],tri[9],tri[10],color[0],color[1],color[2]
+      print(1, file=f)
+      print(tri[2],tri[3],tri[4],tri[5],tri[6],tri[7], \
+            tri[8],tri[9],tri[10],color[0],color[1],color[2], file=f)
 
     bound = 0.25 * self.distance
     ncolor = self.vizinfo.nbcolor
     for bond in bonds:
       itype = int(bond[1])
-      if itype > ncolor: raise StandardError,"bond type too big"
+      if itype > ncolor: raise Exception("bond type too big")
       color = self.vizinfo.bcolor[itype]
       rad = self.vizinfo.brad[itype]
       if fabs(bond[2]-bond[5]) > bound or fabs(bond[3]-bond[6]) > bound:
         continue
-      print >>f,5
-      print >>f,bond[2],bond[3],bond[4],rad, \
-            bond[5],bond[6],bond[7],0.0,color[0],color[1],color[2]
+      print(5, file=f)
+      print(bond[2],bond[3],bond[4],rad, \
+            bond[5],bond[6],bond[7],0.0,color[0],color[1],color[2], file=f)
 
     ncolor = self.vizinfo.nlcolor
     for line in lines:
       itype = int(line[1])
-      if itype > ncolor: raise StandardError,"line type too big"
+      if itype > ncolor: raise Exception("line type too big")
       color = self.vizinfo.lcolor[itype]
       thick = self.vizinfo.lrad[itype]
-      print >>f,3  
-      print >>f,line[2],line[3],line[4],thick, \
-                line[5],line[6],line[7],thick,color[0],color[1],color[2]
+      print(3, file=f)  
+      print(line[2],line[3],line[4],thick, \
+                line[5],line[6],line[7],thick,color[0],color[1],color[2], file=f)
 
     for label in self.labels:
-      print >>f,15
-      print >>f,10
-      print >>f,label[2],label[3],label[4]
-      print >>f,11
-      print >>f,label[0],label[1],0.0,label[5][0],label[5][1],label[5][2]
-      print >>f,label[6]
+      print(15, file=f)
+      print(10, file=f)
+      print(label[2],label[3],label[4], file=f)
+      print(11, file=f)
+      print(label[0],label[1],0.0,label[5][0],label[5][1],label[5][2], file=f)
+      print(label[6], file=f)
       
     f.close()
 
@@ -440,32 +440,32 @@ class raster:
     else:
       cmd = "cat tmp.r3d | %s -png %s.png" % (PIZZA_LABEL3D,file)
 
-    output = commands.getoutput(cmd)
+    output = subprocess.getoutput(cmd)
     return output
 
   # --------------------------------------------------------------------
 
   def adef(self):
-    self.vizinfo.setcolors("atom",range(100),"loop")
-    self.vizinfo.setradii("atom",range(100),0.45)
+    self.vizinfo.setcolors("atom",list(range(100)),"loop")
+    self.vizinfo.setradii("atom",list(range(100)),0.45)
  
   # --------------------------------------------------------------------
 
   def bdef(self):
-    self.vizinfo.setcolors("bond",range(100),"loop")
-    self.vizinfo.setradii("bond",range(100),0.25)
+    self.vizinfo.setcolors("bond",list(range(100)),"loop")
+    self.vizinfo.setradii("bond",list(range(100)),0.25)
     
   # --------------------------------------------------------------------
 
   def tdef(self):
-    self.vizinfo.setcolors("tri",range(100),"loop")  
-    self.vizinfo.setfills("tri",range(100),0)  
+    self.vizinfo.setcolors("tri",list(range(100)),"loop")  
+    self.vizinfo.setfills("tri",list(range(100)),0)  
 
   # --------------------------------------------------------------------
 
   def ldef(self):
-    self.vizinfo.setcolors("line",range(100),"loop")  
-    self.vizinfo.setradii("line",range(100),0.25)
+    self.vizinfo.setcolors("line",list(range(100)),"loop")  
+    self.vizinfo.setradii("line",list(range(100)),0.25)
    
   # --------------------------------------------------------------------
 
@@ -526,32 +526,32 @@ def box_write(f,box,color,thick):
   green = color[1]
   blue = color[2]
   
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-  	      (xlo,ylo,zlo,thick,xhi,ylo,zlo,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,yhi,zlo,thick,xhi,yhi,zlo,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zhi,thick,xhi,ylo,zhi,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,yhi,zhi,thick,xhi,yhi,zhi,thick,red,green,blue)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+  	      (xlo,ylo,zlo,thick,xhi,ylo,zlo,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,yhi,zlo,thick,xhi,yhi,zlo,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,ylo,zhi,thick,xhi,ylo,zhi,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,yhi,zhi,thick,xhi,yhi,zhi,thick,red,green,blue), file=f)
 
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zlo,thick,xlo,yhi,zlo,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,ylo,zlo,thick,xhi,yhi,zlo,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zhi,thick,xlo,yhi,zhi,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,ylo,zhi,thick,xhi,yhi,zhi,thick,red,green,blue)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,ylo,zlo,thick,xlo,yhi,zlo,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xhi,ylo,zlo,thick,xhi,yhi,zlo,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,ylo,zhi,thick,xlo,yhi,zhi,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xhi,ylo,zhi,thick,xhi,yhi,zhi,thick,red,green,blue), file=f)
 
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,ylo,zlo,thick,xlo,ylo,zhi,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,ylo,zlo,thick,xhi,ylo,zhi,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xlo,yhi,zlo,thick,xlo,yhi,zhi,thick,red,green,blue)
-  print >>f,"3\n%g %g %g %g %g %g %g %g %g %g %g" % \
-	      (xhi,yhi,zlo,thick,xhi,yhi,zhi,thick,red,green,blue)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,ylo,zlo,thick,xlo,ylo,zhi,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xhi,ylo,zlo,thick,xhi,ylo,zhi,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xlo,yhi,zlo,thick,xlo,yhi,zhi,thick,red,green,blue), file=f)
+  print("3\n%g %g %g %g %g %g %g %g %g %g %g" % \
+	      (xhi,yhi,zlo,thick,xhi,yhi,zhi,thick,red,green,blue), file=f)
     
 # --------------------------------------------------------------------
 # compute 3x3 rotation matrix for viewing angle

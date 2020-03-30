@@ -80,7 +80,7 @@ timestep = forcedata.next()
 # NOTE: the first timesteps are often blank, and then natoms returns 0, so this doesn't really work...
 #
 if forcedata.snaps[fileindex].natoms !=0 and len(forcedata.snaps[0].atoms[0]) < 12:
-    print "Error - dump file requires at least all parameters from a compute pair/gran/local id pos force (12 in total)"
+    print("Error - dump file requires at least all parameters from a compute pair/gran/local id pos force (12 in total)")
     sys.exit()
 
 # loop through available timesteps
@@ -153,7 +153,7 @@ while timestep >= 0:
         # number of points = number of unique IDs (particles)
         npoints = len(ids)
 
-        print 'Timestep:',str(timestep),'npoints=',str(npoints),'ncells=',str(ncells),'nperiodic=',nperiodic, 'nconnex=',str(nconnex)
+        print('Timestep:',str(timestep),'npoints=',str(npoints),'ncells=',str(ncells),'nperiodic=',nperiodic, 'nconnex=',str(nconnex))
 
 
         # ******************************************

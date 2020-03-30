@@ -66,20 +66,20 @@ class vizinfo:
     # convert args into lists if single values
     # if arg = 0, convert to full-range list
     
-    if type(ids) is types.IntType and ids == 0:
-      if which == "atom": ids = range(self.nacolor)
-      if which == "bond": ids = range(self.nbcolor)
-      if which == "tri": ids = range(self.ntcolor)
-      if which == "line": ids = range(self.nlcolor)
-    if type(ids) is not types.ListType and type(ids) is not types.TupleType:
+    if type(ids) is int and ids == 0:
+      if which == "atom": ids = list(range(self.nacolor))
+      if which == "bond": ids = list(range(self.nbcolor))
+      if which == "tri": ids = list(range(self.ntcolor))
+      if which == "line": ids = list(range(self.nlcolor))
+    if type(ids) is not list and type(ids) is not tuple:
       ids = [ids]
-    if type(rgbs) is not types.ListType and type(rgbs) is not types.TupleType:
+    if type(rgbs) is not list and type(rgbs) is not tuple:
       rgbs = [rgbs]
 
     # if list of types has a 0, increment each type value
 
     if 0 in ids:
-      for i in xrange(len(ids)): ids[i] += 1
+      for i in range(len(ids)): ids[i] += 1
 
     # extend storage list if necessary
     # extend other arrays for same "which" so that gl::make_atom_calllist
@@ -109,11 +109,11 @@ class vizinfo:
     ntypes = len(ids)
     nrgbs = len(rgbs)
 
-    for i in xrange(ntypes):
+    for i in range(ntypes):
       id = ids[i]
 
       if rgbs[0] == "loop":
-        list = colors.keys()
+        list = list(colors.keys())
         red,green,blue = colors[list[i % len(colors)]]
       elif ntypes == nrgbs:
         red,green,blue = colors[rgbs[i]]
@@ -144,20 +144,20 @@ class vizinfo:
     # convert args into lists if single values
     # if arg = 0, convert to full-range list
     
-    if type(ids) is types.IntType and ids == 0:
-      if which == "atom": ids = range(self.narad)
-      if which == "bond": ids = range(self.nbrad)
-      if which == "line": ids = range(self.nlrad)
-    if type(ids) is not types.ListType and type(ids) is not types.TupleType:
+    if type(ids) is int and ids == 0:
+      if which == "atom": ids = list(range(self.narad))
+      if which == "bond": ids = list(range(self.nbrad))
+      if which == "line": ids = list(range(self.nlrad))
+    if type(ids) is not list and type(ids) is not tuple:
       ids = [ids]
-    if type(radii) is not types.ListType and \
-           type(radii) is not types.TupleType:
+    if type(radii) is not list and \
+           type(radii) is not tuple:
       radii = [radii]
 
     # if list of types has a 0, increment each type value
 
     if 0 in ids:
-      for i in xrange(len(ids)): ids[i] += 1
+      for i in range(len(ids)): ids[i] += 1
 
     # extend storage list if necessary
     # extend other arrays for same "which" so that gl::make_atom_calllist
@@ -209,18 +209,18 @@ class vizinfo:
     # convert args into lists if single values
     # if arg = 0, convert to full-range list
     
-    if type(ids) is types.IntType and ids == 0:
-      ids = range(self.ntfill)
-    if type(ids) is not types.ListType and type(ids) is not types.TupleType:
+    if type(ids) is int and ids == 0:
+      ids = list(range(self.ntfill))
+    if type(ids) is not list and type(ids) is not tuple:
       ids = [ids]
-    if type(fills) is not types.ListType and \
-           type(fills) is not types.TupleType:
+    if type(fills) is not list and \
+           type(fills) is not tuple:
       fills = [fills]
 
     # if list of types has a 0, increment each type value
 
     if 0 in ids:
-      for i in xrange(len(ids)): ids[i] += 1
+      for i in range(len(ids)): ids[i] += 1
 
     # extend storage list if necessary
     # extend other arrays for same "which" so that gl::make_atom_calllist
@@ -234,7 +234,7 @@ class vizinfo:
     # if list lengths match, set directly, else set types to 1st fill value
 
     if len(fills) == len(ids):
-      for i in xrange(len(ids)): self.tfill[ids[i]] = int(fills[i])
+      for i in range(len(ids)): self.tfill[ids[i]] = int(fills[i])
     else:
       for id in ids: self.tfill[id] = int(fills[0])
     

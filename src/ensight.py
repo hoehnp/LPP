@@ -73,7 +73,7 @@ class ensight:
     elif type(data) is types.InstanceType and ".cdata" in str(data.__class__):
       self.which = 1
     else:
-      raise StandardError,"unrecognized object passed to ensight"
+      raise Exception("unrecognized object passed to ensight")
     
   # --------------------------------------------------------------------
 
@@ -114,34 +114,34 @@ class ensight:
       if flag == -1: break
 
       if self.which == 0:
-        print >>f,"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=f)
         time,box,atoms,bonds,tris,lines = self.data.viz(which)
         self.coord_file_atoms(f,box,atoms)
-        print >>f,"END TIME STEP"
+        print("END TIME STEP", file=f)
       elif self.change == 0 and first:
-        print >>f,"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=f)
         time,box,nodes,elements,nvalues,evalues = self.data.mviz(which)
         self.coord_file_elements(f,box,nodes,elements)
         etype = len(elements[0])
         first = 0
-        print >>f,"END TIME STEP"
+        print("END TIME STEP", file=f)
       elif self.change:
-        print >>f,"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=f)
         time,box,nodes,elements,nvalues,evalues = self.data.mviz(which)
         self.coord_file_elements(f,box,nodes,elements)
         etype = len(elements[0])
-        print >>f,"END TIME STEP"
+        print("END TIME STEP", file=f)
 
       for i in range(len(pairs)):
-        print >>vfiles[i],"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=vfiles[i])
         values = self.data.vecs(time,pairs[i][0])
         if self.which == 0:
           self.variable_file_atoms(vfiles[i],pairs[i][1],atoms,values)
         else:
           self.variable_file_elements(vfiles[i],pairs[i][1],etype,values)
-        print >>vfiles[i],"END TIME STEP"
+        print("END TIME STEP", file=vfiles[i])
         
-      print time,
+      print(time, end=' ')
       sys.stdout.flush()
       n += 1
 
@@ -150,7 +150,7 @@ class ensight:
     f.close()
     for f in vfiles: f.close()
 
-    print "\nwrote %s snapshots in Ensight format" % n
+    print("\nwrote %s snapshots in Ensight format" % n)
 
   # --------------------------------------------------------------------
 
@@ -181,41 +181,41 @@ class ensight:
     first = 1
     n = etype = 0
     while 1:
-      time = self.data.next()
+      time = next(self.data)
       if time == -1: break
       times.append(time)
       self.data.tselect.one(time)
       self.data.delete()
 
       if self.which == 0:
-        print >>f,"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=f)
         time,box,atoms,bonds,tris,lines = self.data.viz(0)
         self.coord_file_atoms(f,box,atoms)
-        print >>f,"END TIME STEP"
+        print("END TIME STEP", file=f)
       elif self.change == 0 and first:
-        print >>f,"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=f)
         time,box,nodes,elements,nvalues,evalues = self.data.mviz(0)
         self.coord_file_elements(f,box,nodes,elements)
         etype = len(elements[0])
         first = 0
-        print >>f,"END TIME STEP"
+        print("END TIME STEP", file=f)
       elif self.change:
-        print >>f,"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=f)
         time,box,nodes,elements,nvalues,evalues = self.data.mviz(0)
         self.coord_file_elements(f,box,nodes,elements)
         etype = len(elements[0])
-        print >>f,"END TIME STEP"
+        print("END TIME STEP", file=f)
 
       for i in range(len(pairs)):
-        print >>vfiles[i],"BEGIN TIME STEP"
+        print("BEGIN TIME STEP", file=vfiles[i])
         values = self.data.vecs(time,pairs[i][0])
         if self.which == 0:
           self.variable_file_atoms(vfiles[i],pairs[i][1],atoms,values)
         else:
           self.variable_file_elements(vfiles[i],pairs[i][1],etype,values)
-        print >>vfiles[i],"END TIME STEP"
+        print("END TIME STEP", file=vfiles[i])
         
-      print time,
+      print(time, end=' ')
       sys.stdout.flush()
       n += 1
 
@@ -230,7 +230,7 @@ class ensight:
     self.case_file(f,root,pairs,0,len(times),times)
     f.close()
 
-    print "\nwrote %s snapshots in Ensight format" % n
+    print("\nwrote %s snapshots in Ensight format" % n)
 
   # --------------------------------------------------------------------
 
@@ -311,11 +311,11 @@ class ensight:
           self.variable_file_elements(f,pairs[i][1],etype,values)
 	f.close()
 
-      print time,
+      print(time, end=' ')
       sys.stdout.flush()
       n += 1
   
-    print "\nwrote %s snapshots in Ensight format" % n
+    print("\nwrote %s snapshots in Ensight format" % n)
 
   # --------------------------------------------------------------------
 
@@ -367,55 +367,55 @@ class ensight:
   # write Ensight case file
 
   def case_file(self,f,root,pairs,multifile,nsnaps,times):
-    print >>f,"# Ensight case file\n"
-    print >>f,"FORMAT\ntype: ensight gold\n"
+    print("# Ensight case file\n", file=f)
+    print("FORMAT\ntype: ensight gold\n", file=f)
     
     if self.which == 0:
       if multifile:
 #        print >>f,"GEOMETRY\nmodel: %s****.xyz change_coords_only\n" % root
-        print >>f,"GEOMETRY\nmodel: %s****.xyz\n" % root
+        print("GEOMETRY\nmodel: %s****.xyz\n" % root, file=f)
       else:
 #        print >>f,"GEOMETRY\nmodel: 1 1 %s.xyz change_coords_only\n" % root
-        print >>f,"GEOMETRY\nmodel: 1 1 %s.xyz\n" % root
+        print("GEOMETRY\nmodel: 1 1 %s.xyz\n" % root, file=f)
     else:
       if self.change == 0:
-        print >>f,"GEOMETRY\nmodel: %s.xyz\n" % root
+        print("GEOMETRY\nmodel: %s.xyz\n" % root, file=f)
       elif multifile:
-        print >>f,"GEOMETRY\nmodel: %s****.xyz\n" % root
+        print("GEOMETRY\nmodel: %s****.xyz\n" % root, file=f)
       else:
-        print >>f,"GEOMETRY\nmodel: 1 1 %s.xyz\n" % root
+        print("GEOMETRY\nmodel: 1 1 %s.xyz\n" % root, file=f)
 
     if len(pairs):
-      print >>f,"VARIABLE"
+      print("VARIABLE", file=f)
       for pair in pairs:
         if self.which == 0:
           if multifile:
-            print >>f,"scalar per node: %s %s****.%s" % (pair[1],root,pair[0])
+            print("scalar per node: %s %s****.%s" % (pair[1],root,pair[0]), file=f)
           else:
-            print >>f,"scalar per node: 1 1 %s %s.%s" % (pair[1],root,pair[0])
+            print("scalar per node: 1 1 %s %s.%s" % (pair[1],root,pair[0]), file=f)
         else:
           if multifile:
-            print >>f,"scalar per element: %s %s****.%s" % (pair[1],root,pair[0])
+            print("scalar per element: %s %s****.%s" % (pair[1],root,pair[0]), file=f)
           else:
-            print >>f,"scalar per element: 1 1 %s %s.%s" % (pair[1],root,pair[0])
-      print >>f
+            print("scalar per element: 1 1 %s %s.%s" % (pair[1],root,pair[0]), file=f)
+      print(file=f)
 
-    print >>f,"TIME"
-    print >>f,"time set: 1"
-    print >>f,"number of steps:",nsnaps
-    print >>f,"filename start number: 0"
-    print >>f,"filename increment: 1"
-    print >>f,"time values:"
+    print("TIME", file=f)
+    print("time set: 1", file=f)
+    print("number of steps:",nsnaps, file=f)
+    print("filename start number: 0", file=f)
+    print("filename increment: 1", file=f)
+    print("time values:", file=f)
     for i in range(nsnaps):
-      print >>f,times[i],
-      if i % 10 == 9: print >>f
-    print >>f
-    print >>f
+      print(times[i], end=' ', file=f)
+      if i % 10 == 9: print(file=f)
+    print(file=f)
+    print(file=f)
     
     if not multifile:
-      print >>f,"FILE"
-      print >>f,"file set: 1"
-      print >>f,"number of steps:",nsnaps
+      print("FILE", file=f)
+      print("file set: 1", file=f)
+      print("number of steps:",nsnaps, file=f)
 
   # --------------------------------------------------------------------
   # write Ensight coordinates for atoms
@@ -423,65 +423,65 @@ class ensight:
   # one part = coords for all atoms of a single type
 
   def coord_file_atoms(self,f,box,atoms):
-    print >>f,"Particle geometry\nfor a collection of atoms"
-    print >>f,"node id given"
-    print >>f,"element id off"
-    print >>f,"extents"
-    print >>f,"%12.5e%12.5e" % (box[0],box[3])
-    print >>f,"%12.5e%12.5e" % (box[1],box[4])
-    print >>f,"%12.5e%12.5e" % (box[2],box[5])
+    print("Particle geometry\nfor a collection of atoms", file=f)
+    print("node id given", file=f)
+    print("element id off", file=f)
+    print("extents", file=f)
+    print("%12.5e%12.5e" % (box[0],box[3]), file=f)
+    print("%12.5e%12.5e" % (box[1],box[4]), file=f)
+    print("%12.5e%12.5e" % (box[2],box[5]), file=f)
 
-    for type in xrange(1,self.maxtype+1):
-      print >>f,"part"
-      print >>f,"%10d" % type
-      print >>f,"type",type
-      print >>f,"coordinates"
+    for type in range(1,self.maxtype+1):
+      print("part", file=f)
+      print("%10d" % type, file=f)
+      print("type",type, file=f)
+      print("coordinates", file=f)
       group = [atom for atom in atoms if int(atom[1]) == type]
-      print >>f,"%10d" % len(group)
-      for atom in group: print >>f,"%10d" % int(atom[0])
-      for atom in group: print >>f,"%12.5e" % atom[2]
-      for atom in group: print >>f,"%12.5e" % atom[3]
-      for atom in group: print >>f,"%12.5e" % atom[4]
-      print >>f,"point"
-      print >>f,"%10d" % len(group)
-      for i in xrange(1,len(group)+1): print >>f,"%10d" % i
+      print("%10d" % len(group), file=f)
+      for atom in group: print("%10d" % int(atom[0]), file=f)
+      for atom in group: print("%12.5e" % atom[2], file=f)
+      for atom in group: print("%12.5e" % atom[3], file=f)
+      for atom in group: print("%12.5e" % atom[4], file=f)
+      print("point", file=f)
+      print("%10d" % len(group), file=f)
+      for i in range(1,len(group)+1): print("%10d" % i, file=f)
 
   # --------------------------------------------------------------------
   # write Ensight coordinates for elements
 
   def coord_file_elements(self,f,box,nodes,elements):
-    print >>f,"Element geometry\nfor a collection of elements"
-    print >>f,"node id given"
-    print >>f,"element id given"
-    print >>f,"extents"
-    print >>f,"%12.5e%12.5e" % (box[0],box[3])
-    print >>f,"%12.5e%12.5e" % (box[1],box[4])
-    print >>f,"%12.5e%12.5e" % (box[2],box[5])
+    print("Element geometry\nfor a collection of elements", file=f)
+    print("node id given", file=f)
+    print("element id given", file=f)
+    print("extents", file=f)
+    print("%12.5e%12.5e" % (box[0],box[3]), file=f)
+    print("%12.5e%12.5e" % (box[1],box[4]), file=f)
+    print("%12.5e%12.5e" % (box[2],box[5]), file=f)
 
-    print >>f,"part"
-    print >>f,"%10d" % 1
-    print >>f,"all elements"
-    print >>f,"coordinates"
-    print >>f,"%10d" % len(nodes)
-    for node in nodes: print >>f,"%10d" % int(node[0])
-    for node in nodes: print >>f,"%12.5e" % node[2]
-    for node in nodes: print >>f,"%12.5e" % node[3]
-    for node in nodes: print >>f,"%12.5e" % node[4]
+    print("part", file=f)
+    print("%10d" % 1, file=f)
+    print("all elements", file=f)
+    print("coordinates", file=f)
+    print("%10d" % len(nodes), file=f)
+    for node in nodes: print("%10d" % int(node[0]), file=f)
+    for node in nodes: print("%12.5e" % node[2], file=f)
+    for node in nodes: print("%12.5e" % node[3], file=f)
+    for node in nodes: print("%12.5e" % node[4], file=f)
 
-    if len(elements[0]) == 5: print >>f,"tria3"
-    elif len(elements[0]) == 6: print >>f,"tetra4"
-    else: raise StandardError,"unrecognized element type"
-    print >>f,"%10d" % len(elements)
+    if len(elements[0]) == 5: print("tria3", file=f)
+    elif len(elements[0]) == 6: print("tetra4", file=f)
+    else: raise Exception("unrecognized element type")
+    print("%10d" % len(elements), file=f)
 
-    for element in elements: print >>f,"%10d" % int(element[0])
+    for element in elements: print("%10d" % int(element[0]), file=f)
     if len(elements[0]) == 5:
       for element in elements:
-        print >>f,"%10d%10d%10d" % \
-              (int(element[2]),int(element[3]),int(element[4]))
+        print("%10d%10d%10d" % \
+              (int(element[2]),int(element[3]),int(element[4])), file=f)
     elif len(elements[0]) == 6:
       for element in elements:
-        print >>f,"%10d%10d%10d%10d" % \
-              (int(element[2]),int(element[3]),int(element[4]),int(element[5]))
+        print("%10d%10d%10d%10d" % \
+              (int(element[2]),int(element[3]),int(element[4]),int(element[5])), file=f)
 
   # --------------------------------------------------------------------
   # write Ensight variable values for atoms
@@ -489,22 +489,22 @@ class ensight:
   # one part = values for all atoms of a single type
 
   def variable_file_atoms(self,f,name,atoms,values):
-    print >>f,"Particle %s" % name
-    for type in xrange(1,self.maxtype+1):
-      print >>f,"part"
-      print >>f,"%10d" % type
-      print >>f,"coordinates"
-      group = [values[i] for i in xrange(len(atoms))
+    print("Particle %s" % name, file=f)
+    for type in range(1,self.maxtype+1):
+      print("part", file=f)
+      print("%10d" % type, file=f)
+      print("coordinates", file=f)
+      group = [values[i] for i in range(len(atoms))
                if int(atoms[i][1]) == type]
-      for value in group: print >>f,"%12.5e" % value
+      for value in group: print("%12.5e" % value, file=f)
 
   # --------------------------------------------------------------------
   # write Ensight variable values for elements
 
   def variable_file_elements(self,f,name,etype,values):
-    print >>f,"Element %s" % name
-    print >>f,"part"
-    print >>f,"%10d" % 1
-    if etype == 5: print >>f,"tria3"
-    elif etype == 6: print >>f,"tetra4"
-    for value in values: print >>f,"%12.5e" % value
+    print("Element %s" % name, file=f)
+    print("part", file=f)
+    print("%10d" % 1, file=f)
+    if etype == 5: print("tria3", file=f)
+    elif etype == 6: print("tetra4", file=f)
+    for value in values: print("%12.5e" % value, file=f)

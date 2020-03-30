@@ -129,15 +129,14 @@ class data:
         keyword,length = pair[0],pair[1]
         if keyword == line:
 	  found = 1
-          if not headers.has_key(length):
-            raise StandardError, \
-                  "data section %s has no matching header value" % line
+          if length not in headers:
+            raise Exception("data section %s has no matching header value" % line)
 	  f.readline()
           list = []
-          for i in xrange(headers[length]): list.append(f.readline())
+          for i in range(headers[length]): list.append(f.readline())
           sections[keyword] = list
       if not found:
-        raise StandardError,"invalid section %s in data file" % line
+        raise Exception("invalid section %s in data file" % line)
       f.readline()
       line = f.readline()
       if not line:
@@ -153,7 +152,7 @@ class data:
 
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
-      raise StandardError, "data map() requires pairs of mappings"
+      raise Exception("data map() requires pairs of mappings")
     for i in range(0,len(pairs),2):
       j = i + 1
       self.names[pairs[j]] = pairs[i]-1
@@ -168,7 +167,7 @@ class data:
       lines = self.sections[field]
       for line in lines:
         words = line.split()
-        values = map(float,words)
+        values = list(map(float,words))
         array.append(values)
       return array
     elif len(list) == 2:
@@ -181,7 +180,7 @@ class data:
         vec.append(float(words[n]))
       return vec
     else:
-      raise StandardError, "invalid arguments for data.get()"
+      raise Exception("invalid arguments for data.get()")
 
   # --------------------------------------------------------------------
   # reorder columns in a data file field
@@ -192,10 +191,10 @@ class data:
     oldlines = self.sections[name]
     newlines = natoms*[""]
     for index in order:
-      for i in xrange(len(newlines)):
+      for i in range(len(newlines)):
         words = oldlines[i].split()
         newlines[i] += words[index-1] + " "
-    for i in xrange(len(newlines)):
+    for i in range(len(newlines)):
       newlines[i] += "\n"
     self.sections[name] = newlines
 
@@ -206,7 +205,7 @@ class data:
     lines = self.sections[name]
     newlines = []
     j = icol - 1
-    for i in xrange(len(lines)):
+    for i in range(len(lines)):
       line = lines[i]
       words = line.split()
       words[j] = str(vector[i])
@@ -234,7 +233,7 @@ class data:
     self.replace("Atoms",self.names['y']+1,y)
     self.replace("Atoms",self.names['z']+1,z)
     
-    if dm.names.has_key("ix") and self.names.has_key("ix"):
+    if "ix" in dm.names and "ix" in self.names:
       ix,iy,iz = dm.vecs(ntime,"ix","iy","iz")
       self.replace("Atoms",self.names['ix']+1,ix)
       self.replace("Atoms",self.names['iy']+1,iy)
@@ -245,33 +244,33 @@ class data:
 
   def delete(self,keyword):
 
-    if self.headers.has_key(keyword): del self.headers[keyword]
-    elif self.sections.has_key(keyword): del self.sections[keyword]
-    else: raise StandardError, "keyword not found in data object"
+    if keyword in self.headers: del self.headers[keyword]
+    elif keyword in self.sections: del self.sections[keyword]
+    else: raise Exception("keyword not found in data object")
 
   # --------------------------------------------------------------------
   # write out a LAMMPS data file
 
   def write(self,file):
     f = open(file,"w")
-    print >>f,self.title
+    print(self.title, file=f)
     for keyword in hkeywords:
-      if self.headers.has_key(keyword):
+      if keyword in self.headers:
         if keyword == "xlo xhi" or keyword == "ylo yhi" or \
                keyword == "zlo zhi":
 	  pair = self.headers[keyword]
-	  print >>f,pair[0],pair[1],keyword
+	  print(pair[0],pair[1],keyword, file=f)
         elif keyword == "xy xz yz":
 	  triple = self.headers[keyword]
-	  print >>f,triple[0],triple[1],triple[2],keyword
+	  print(triple[0],triple[1],triple[2],keyword, file=f)
         else:
-	  print >>f,self.headers[keyword],keyword
+	  print(self.headers[keyword],keyword, file=f)
     for pair in skeywords:
       keyword = pair[0]
-      if self.sections.has_key(keyword):
-        print >>f,"\n%s\n" % keyword
+      if keyword in self.sections:
+        print("\n%s\n" % keyword, file=f)
         for line in self.sections[keyword]:
-	  print >>f,line,
+	  print(line, end=' ', file=f)
     f.close()
 
   # --------------------------------------------------------------------
@@ -286,13 +285,13 @@ class data:
 
   def findtime(self,n):
     if n == 0: return 0
-    raise StandardError, "no step %d exists" % (n)
+    raise Exception("no step %d exists" % (n))
    
   # --------------------------------------------------------------------
   # return list of atoms and bonds to viz for data object
 
   def viz(self,isnap):
-    if isnap: raise StandardError, "cannot call data.viz() with isnap != 0"
+    if isnap: raise Exception("cannot call data.viz() with isnap != 0")
     
     id = self.names["id"]
     type = self.names["type"]
@@ -318,7 +317,7 @@ class data:
     # assumes atoms are sorted so can lookup up the 2 atoms in each bond
 
     bonds = []
-    if self.sections.has_key("Bonds"):
+    if "Bonds" in self.sections:
       bondlines = self.sections["Bonds"]
       for line in bondlines:
         words = line.split()

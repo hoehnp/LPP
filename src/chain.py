@@ -92,12 +92,12 @@ class chain:
     self.zlo = -self.zprd/2.0
     self.zhi = self.zprd/2.0
 
-    print "Simulation box: %g by %g by %g" % (self.xprd,self.yprd,self.zprd)
+    print("Simulation box: %g by %g by %g" % (self.xprd,self.yprd,self.zprd))
 
   # --------------------------------------------------------------------
 
   def build(self,n,nper):
-    for ichain in xrange(n):
+    for ichain in range(n):
       atoms = []
       bonds = []
       id_atom_prev = id_mol_prev = id_bond_prev = 0
@@ -107,7 +107,7 @@ class chain:
       if len(self.bonds):
         id_bond_prev = self.bonds[-1][0]
 
-      for imonomer in xrange(nper):
+      for imonomer in range(nper):
         if imonomer == 0:
           x = self.xlo + self.random()*self.xprd
           y = self.ylo + self.random()*self.yprd
@@ -146,7 +146,7 @@ class chain:
           if idmol > nper/2:
             idmol = nper - imonomer
         else:
-          raise StandardError,"chain ID is not a valid value"
+          raise Exception("chain ID is not a valid value")
 	        
         atoms.append([idatom,idmol,self.mtype,x,y,z,ix,iy,iz])
         if imonomer:
@@ -160,8 +160,8 @@ class chain:
 
   def write(self,file):
     if len(self.atoms) != self.n:
-      raise StandardError,"%d monomers instead of requested %d" % \
-                           (len(self.atoms),self.n)
+      raise Exception("%d monomers instead of requested %d" % \
+                           (len(self.atoms),self.n))
 
     list = [atom[2] for atom in self.atoms]
     atypes = max(list)

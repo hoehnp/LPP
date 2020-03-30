@@ -69,7 +69,7 @@ l.owrap(...)		          wrap lines to same image as their atoms
 
 # Imports and external programs
 
-import sys, commands, re, glob, types
+import sys, subprocess, re, glob, types
 from os import popen
 
 try:
@@ -99,7 +99,7 @@ class ldump:
     self.flist = []
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
-      raise StandardError,"no ldump file specified"
+      raise Exception("no ldump file specified")
     
     if len(list) == 1:
       self.increment = 0
@@ -124,26 +124,26 @@ class ldump:
       snap = self.read_snapshot(f)
       while snap:
         self.snaps.append(snap)
-        print snap.time,
+        print(snap.time, end=' ')
         sys.stdout.flush()
         snap = self.read_snapshot(f)
 
       f.close()
-    print
+    print()
 
     # sort entries by timestep, cull duplicates
 
     self.snaps.sort(self.compare_time)
     self.cull()
     self.nsnaps = len(self.snaps)
-    print "read %d snapshots" % self.nsnaps
+    print("read %d snapshots" % self.nsnaps)
 
   # --------------------------------------------------------------------
   # read next snapshot from list of files
 
   def next(self):
 
-    if not self.increment: raise StandardError,"cannot read incrementally"
+    if not self.increment: raise Exception("cannot read incrementally")
 
     # read next snapshot in current file using eof as pointer
     # if fail, try next file
@@ -197,14 +197,14 @@ class ldump:
       if snap.natoms:
         words = f.readline().split()
         ncol = len(words)
-        for i in xrange(1,snap.natoms):
+        for i in range(1,snap.natoms):
           words += f.readline().split()
-        floats = map(float,words)
+        floats = list(map(float,words))
         if oldnumeric: atoms = np.zeros((snap.natoms,ncol),np.Float)
         else: atoms = np.zeros((snap.natoms,ncol),np.float)
         start = 0
         stop = ncol
-        for i in xrange(snap.natoms):
+        for i in range(snap.natoms):
           atoms[i] = floats[start:stop]
           start = stop
           stop += ncol
@@ -219,7 +219,7 @@ class ldump:
   
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
-      raise StandardError, "ldump map() requires pairs of mappings"
+      raise Exception("ldump map() requires pairs of mappings")
     for i in range(0,len(pairs),2):
       j = i + 1
       self.names[pairs[j]] = pairs[i]-1
@@ -249,9 +249,9 @@ class ldump:
   # --------------------------------------------------------------------
 
   def findtime(self,n):
-    for i in xrange(self.nsnaps):
+    for i in range(self.nsnaps):
       if self.snaps[i].time == n: return i
-    raise StandardError, "no step %d exists" % n
+    raise Exception("no step %d exists" % n)
 
   # --------------------------------------------------------------------
   # delete successive snapshots with duplicate time stamp
@@ -293,7 +293,7 @@ class ldump:
     # don't add line if all 4 values are 0 since not a line
     
     lines = []
-    for i in xrange(snap.natoms):
+    for i in range(snap.natoms):
       atom = snap.atoms[i]
       e1x = atom[end1x]
       e1y = atom[end1y]
@@ -323,7 +323,7 @@ class ldump:
     # jdump = atom J in dump's atoms that atom I was owrapped on
     # delx,dely = offset applied to atom I and thus to line I
     
-    for i in xrange(snap.natoms):
+    for i in range(snap.natoms):
       tag = atoms[i][id]
       idump = idsdump[tag]
       jdump = idsdump[atomsdump[idump][iother]]

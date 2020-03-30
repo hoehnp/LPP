@@ -74,7 +74,7 @@ class clog:
     self.flist = []
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
-      raise StandardError,"no log file specified"
+      raise Exception("no log file specified")
 
     if len(list) > 1 and len(list[1]): self.firststr = list[1]
     if len(list) == 3: self.ave = 1
@@ -86,12 +86,12 @@ class clog:
   
   def read_all(self):
     self.read_header(self.flist[0])
-    if self.nvec == 0: raise StandardError,"log file has no values"
+    if self.nvec == 0: raise Exception("log file has no values")
 
     # read all files
 
     for file in self.flist: self.read_one(file)
-    print
+    print()
 
     # if no average, sort entries by timestep, cull duplicates
     # if average, call self.average()
@@ -102,17 +102,17 @@ class clog:
     else: self.average()
 
     self.nlen = len(self.data)
-    print "read %d log entries" % self.nlen
+    print("read %d log entries" % self.nlen)
 
   # --------------------------------------------------------------------
 
   def get(self,*keys):
     if len(keys) == 0:
-      raise StandardError, "no log vectors specified"
+      raise Exception("no log vectors specified")
 
     map = []
     for key in keys:
-      if self.ptr.has_key(key):
+      if key in self.ptr:
         map.append(self.ptr[key])
       else:
         count = 0
@@ -123,12 +123,12 @@ class clog:
         if count == 1:
           map.append(index)
         else:
-          raise StandardError, "unique log vector %s not found" % key
+          raise Exception("unique log vector %s not found" % key)
 
     vecs = []
     for i in range(len(keys)):
       vecs.append(self.nlen * [0])
-      for j in xrange(self.nlen):
+      for j in range(self.nlen):
         vecs[i][j] = self.data[j][map[i]]
 
     if len(keys) == 1: return vecs[0]
@@ -140,7 +140,7 @@ class clog:
     if len(keys):
       map = []
       for key in keys:
-        if self.ptr.has_key(key):
+        if key in self.ptr:
           map.append(self.ptr[key])
         else:
           count = 0
@@ -151,15 +151,15 @@ class clog:
           if count == 1:
             map.append(index)
           else:
-            raise StandardError, "unique log vector %s not found" % key
+            raise Exception("unique log vector %s not found" % key)
     else:
-      map = range(self.nvec)
+      map = list(range(self.nvec))
 
     f = open(filename,"w")
-    for i in xrange(self.nlen):
-      for j in xrange(len(map)):
-        print >>f,self.data[i][map[j]],
-      print >>f
+    for i in range(self.nlen):
+      for j in range(len(map)):
+        print(self.data[i][map[j]], end=' ', file=f)
+      print(file=f)
     f.close()
 
   # --------------------------------------------------------------------
@@ -195,12 +195,12 @@ class clog:
         data.append(self.nvec*[0])
         nlen += 1
       counts[j] += 1
-      for m in xrange(self.nvec): data[j][m] += self.data[i][m]
+      for m in range(self.nvec): data[j][m] += self.data[i][m]
       j += 1
       i += 1
 
-    for i in xrange(nlen):
-      for j in xrange(self.nvec):
+    for i in range(nlen):
+      for j in range(self.nvec):
         data[i][j] /= counts[j]
 
     self.nlen = nlen
@@ -291,11 +291,11 @@ class clog:
       lines = chunk.split("\n")
       for line in lines:
         words = line.split()
-        self.data.append(map(float,words))
+        self.data.append(list(map(float,words)))
   
       # print last timestep of chunk
 
-      print int(self.data[len(self.data)-1][0]),
+      print(int(self.data[len(self.data)-1][0]), end=' ')
       sys.stdout.flush()
 
     return eof

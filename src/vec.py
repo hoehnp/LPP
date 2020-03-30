@@ -58,17 +58,17 @@ class vec:
       for line in lines:
         words = line.split()
         if len(words) and words[0][0] in "0123456789.-":
-          self.data.append(map(float,words))
-    elif type(data) == types.ListType:
+          self.data.append(list(map(float,words)))
+    elif type(data) == list:
       nlen = len(data[0])
       for list in data[1:]:
         if len(list) != nlen:
-          raise StandardError,"lists are not all same length"
-      for i in xrange(nlen):
+          raise Exception("lists are not all same length")
+      for i in range(nlen):
         values = [list[i] for list in data]
-        self.data.append(map(float,values))
+        self.data.append(list(map(float,values)))
     else:
-      raise StandardError,"invalid argument to vec"
+      raise Exception("invalid argument to vec")
     
     if len(self.data) == 0:
       self.nlen = self.nvec = 0
@@ -77,25 +77,25 @@ class vec:
       self.nvec = len(self.data[0])
 
     self.names = []
-    for i in xrange(self.nvec):
+    for i in range(self.nvec):
       self.names.append(str("col%d" % (i+1)))
 
     self.ptr = {}
-    for i in xrange(self.nvec):
+    for i in range(self.nvec):
       self.ptr[self.names[i]] = i
 
-    print "read %d vectors of length %d" % (self.nvec,self.nlen)
+    print("read %d vectors of length %d" % (self.nvec,self.nlen))
     
   # --------------------------------------------------------------------
 
   def get(self,*keys):
     if len(keys) == 0:
-      raise StandardError, "no vectors specified"
+      raise Exception("no vectors specified")
 
     map = []
     for key in keys:
-      if type(key) == types.IntType: map.append(key-1)
-      elif self.ptr.has_key(key): map.append(self.ptr[key])
+      if type(key) == int: map.append(key-1)
+      elif key in self.ptr: map.append(self.ptr[key])
       else:
         count = 0
         for i in range(self.nvec):
@@ -105,12 +105,12 @@ class vec:
         if count == 1:
           map.append(index)
         else:
-          raise StandardError, "unique vector %s not found" % key
+          raise Exception("unique vector %s not found" % key)
 
     vecs = []
     for i in range(len(keys)):
       vecs.append(self.nlen * [0])
-      for j in xrange(self.nlen):
+      for j in range(self.nlen):
         vecs[i][j] = self.data[j][map[i]]
 
     if len(keys) == 1: return vecs[0]
@@ -122,8 +122,8 @@ class vec:
     if len(keys):
       map = []
       for key in keys:
-        if type(key) == types.IntType: map.append(key-1)
-        elif self.ptr.has_key(key): map.append(self.ptr[key])
+        if type(key) == int: map.append(key-1)
+        elif key in self.ptr: map.append(self.ptr[key])
         else:
           count = 0
           for i in range(self.nvec):
@@ -133,13 +133,13 @@ class vec:
           if count == 1:
             map.append(index)
           else:
-            raise StandardError, "unique vector %s not found" % key
+            raise Exception("unique vector %s not found" % key)
     else:
-      map = range(self.nvec)
+      map = list(range(self.nvec))
 
     f = open(filename,"w")
-    for i in xrange(self.nlen):
-      for j in xrange(len(map)):
-        print >>f,self.data[i][map[j]],
-      print >>f
+    for i in range(self.nlen):
+      for j in range(len(map)):
+        print(self.data[i][map[j]], end=' ', file=f)
+      print(file=f)
     f.close()

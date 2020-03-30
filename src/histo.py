@@ -43,7 +43,7 @@ class histo:
     if dim == 'x': idim = 2
     elif dim == 'y': idim = 3
     elif dim == 'z': idim = 4
-    else: raise StandardError,"illegal dim value"
+    else: raise Exception("illegal dim value")
 
     y = nbins*[0]
     
@@ -78,9 +78,9 @@ class histo:
       n += 1
 
     x = nbins*[0]
-    for i in xrange(nbins): x[i] = (i+0.5)*delta
+    for i in range(nbins): x[i] = (i+0.5)*delta
       
-    print "histogram snapshots = ",n
-    print "histogram counts (per snap) = %d (%g)" % (count,float(count)/n)
-    print "histogram bounds = ",lo,hi
+    print("histogram snapshots = ",n)
+    print("histogram counts (per snap) = %d (%g)" % (count,float(count)/n))
+    print("histogram bounds = ",lo,hi)
     return x,y

@@ -76,14 +76,14 @@ class log:
     self.flist = []
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
-      raise StandardError,"no log file specified"
+      raise Exception("no log file specified")
 
     if len(list) == 1:
       self.increment = 0
       self.read_all()
     else:
       if len(self.flist) > 1:
-        raise StandardError,"can only incrementally read one log file"
+        raise Exception("can only incrementally read one log file")
       self.increment = 1
       self.eof = 0
 
@@ -92,24 +92,24 @@ class log:
   
   def read_all(self):
     self.read_header(self.flist[0])
-    if self.nvec == 0: raise StandardError,"log file has no values"
+    if self.nvec == 0: raise Exception("log file has no values")
 
     # read all files
 
     for file in self.flist: self.read_one(file)
-    print
+    print()
 
     # sort entries by timestep, cull duplicates
     
     self.data.sort(self.compare)
     self.cull()
     self.nlen = len(self.data)
-    print "read %d log entries" % self.nlen
+    print("read %d log entries" % self.nlen)
 
   # --------------------------------------------------------------------
 
   def next(self):
-    if not self.increment: raise StandardError,"cannot read incrementally"
+    if not self.increment: raise Exception("cannot read incrementally")
 
     if self.nvec == 0:
       try: open(self.flist[0],'r')
@@ -124,11 +124,11 @@ class log:
 
   def get(self,*keys):
     if len(keys) == 0:
-      raise StandardError, "no log vectors specified"
+      raise Exception("no log vectors specified")
 
     map = []
     for key in keys:
-      if self.ptr.has_key(key):
+      if key in self.ptr:
         map.append(self.ptr[key])
       else:
         count = 0
@@ -139,12 +139,12 @@ class log:
         if count == 1:
           map.append(index)
         else:
-          raise StandardError, "unique log vector %s not found" % key
+          raise Exception("unique log vector %s not found" % key)
 
     vecs = []
     for i in range(len(keys)):
       vecs.append(self.nlen * [0])
-      for j in xrange(self.nlen):
+      for j in range(self.nlen):
         vecs[i][j] = self.data[j][map[i]]
 
     if len(keys) == 1: return vecs[0]
@@ -156,7 +156,7 @@ class log:
     if len(keys):
       map = []
       for key in keys:
-        if self.ptr.has_key(key):
+        if key in self.ptr:
           map.append(self.ptr[key])
         else:
           count = 0
@@ -167,15 +167,15 @@ class log:
           if count == 1:
             map.append(index)
           else:
-            raise StandardError, "unique log vector %s not found" % key
+            raise Exception("unique log vector %s not found" % key)
     else:
-      map = range(self.nvec)
+      map = list(range(self.nvec))
 
     f = open(filename,"w")
-    for i in xrange(self.nlen):
-      for j in xrange(len(map)):
-        print >>f,self.data[i][map[j]],
-      print >>f
+    for i in range(self.nlen):
+      for j in range(len(map)):
+        print(self.data[i][map[j]], end=' ', file=f)
+      print(file=f)
     f.close()
 
   # --------------------------------------------------------------------
@@ -318,17 +318,17 @@ class log:
           word1 = [re.search(pat1,section).group(1)]
           word2 = re.findall(pat2,section)
           words = word1 + word2
-          self.data.append(map(float,words))
+          self.data.append(list(map(float,words)))
 
       else:
         lines = chunk.split("\n")
         for line in lines:
           words = line.split()
-          self.data.append(map(float,words))
+          self.data.append(list(map(float,words)))
 
       # print last timestep of chunk
 
-      print int(self.data[len(self.data)-1][0]),
+      print(int(self.data[len(self.data)-1][0]), end=' ')
       sys.stdout.flush()
 
     return eof

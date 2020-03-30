@@ -66,7 +66,7 @@ v.saveall()		   toggle save-all checkbox
 
 # Imports and external programs
 
-from Tkinter import *
+from tkinter import *
 import types
 
 # Class definition
@@ -88,7 +88,7 @@ class vcr:
     # load data for each viewer
     # if each viewer has different data set, nframes is for 1st viewer
 
-    if len(views) == 0: raise StandardError,"must have at least one GL viewer"
+    if len(views) == 0: raise Exception("must have at least one GL viewer")
     self.viewlist = []
     for view in views: self.viewlist.append(view)
     for view in self.viewlist: view.reload()

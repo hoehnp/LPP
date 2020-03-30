@@ -112,7 +112,7 @@ s.thick = 2.0               pixel thickness of black atom border
 
 # Imports and external programs
 
-import sys, os, commands, re
+import sys, os, subprocess, re
 from vizinfo import vizinfo
 from math import sqrt,atan,cos,sin,fabs
 
@@ -202,7 +202,7 @@ class svg:
     
     self.single(self.file,box,atoms,bonds,tris,lines,1)
     cmd = "%s %s.svg" % (PIZZA_DISPLAY,self.file)
-    commands.getoutput(cmd)
+    subprocess.getoutput(cmd)
   
   # --------------------------------------------------------------------
 
@@ -273,7 +273,7 @@ class svg:
 	if n == nstart or self.panflag: scaleflag = 1       
 
 	self.single(file,box,atoms,bonds,tris,lines,scaleflag) 
-        print time,
+        print(time, end=' ')
         sys.stdout.flush()
         i += 1
         n += 1
@@ -315,11 +315,11 @@ class svg:
 	if n == nstart or self.panflag: scaleflag = 1
 
 	self.single(file,box,atoms,bonds,tris,lines,scaleflag) 
-        print n,
+        print(n, end=' ')
         sys.stdout.flush()
         n += 1
         
-    print "\n%d images" % ncount  
+    print("\n%d images" % ncount)  
   
   # --------------------------------------------------------------------
 
@@ -430,19 +430,19 @@ class svg:
     header = '<?xml version="1.0"?> <svg height="%s" width="%s" >' % \
              (self.ypixels,self.xpixels)
     header += '<g style="fill-opacity:1.0; stroke:black; stroke-width:0.001;">'
-    print >>f,header
+    print(header, file=f)
 
     color = '<rect x="0" y="0" height="%s" width="%s" ' % \
             (self.ypixels,self.xpixels)
     color += 'fill="rgb(%s,%s,%s)"/>' % \
              (self.bgcol[0]*255,self.bgcol[1]*255,self.bgcol[2]*255)
-    print >>f,color
+    print(color, file=f)
     
     for element in olist: self.write(f,0,element)
     for label in self.labels: self.write(f,1,label)
 
     footer = "</g></svg>"
-    print >> f,footer 
+    print(footer, file=f) 
     
     f.close()  
   
@@ -514,80 +514,80 @@ class svg:
       if obj[0] == 0:     # atom with its color and radius
 	itype = int(obj[1])
 	if itype > self.vizinfo.nacolor:
-          raise StandardError,"atom type too big"
+          raise Exception("atom type too big")
         color = self.vizinfo.acolor[itype]
         rad = self.vizinfo.arad[itype]
-	print >>f,'<circle cx="%s" cy="%s" r="%s" fill="rgb(%s,%s,%s)" stroke-width="%s" />' % \
+	print('<circle cx="%s" cy="%s" r="%s" fill="rgb(%s,%s,%s)" stroke-width="%s" />' % \
                    (obj[2],obj[3],rad*self.factor,
-                    color[0]*255,color[1]*255,color[2]*255,self.thick)
+                    color[0]*255,color[1]*255,color[2]*255,self.thick), file=f)
         
       elif obj[0] == 1:    # tri with its color (need to add fill type)
         itype = int(obj[1]) 
 	if itype > self.vizinfo.ntcolor:
-          raise StandardError,"tri type too big"
+          raise Exception("tri type too big")
         color = self.vizinfo.tcolor[itype]
-        print >>f,'<polygon points= "%s,%s %s,%s %s,%s" fill="rgb(%s,%s,%s)" stroke="black" stroke-width="0.01" />' % \
+        print('<polygon points= "%s,%s %s,%s %s,%s" fill="rgb(%s,%s,%s)" stroke="black" stroke-width="0.01" />' % \
               (obj[2],obj[3],obj[5],obj[6],obj[8],obj[9],
-               color[0]*255,color[1]*255,color[2]*255)
+               color[0]*255,color[1]*255,color[2]*255), file=f)
 
       elif obj[0] == 2:    # bond with its color and thickness
         itype = int(obj[1])
 	if itype > self.vizinfo.nbcolor:
-          raise StandardError,"bond type too big"
+          raise Exception("bond type too big")
         color = self.vizinfo.bcolor[itype]
         thick = self.vizinfo.brad[itype]
-	print >>f,'<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="rgb(%s,%s,%s)" stroke-width="%s" />' % \
+	print('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="rgb(%s,%s,%s)" stroke-width="%s" />' % \
               (obj[2],obj[3],obj[5],obj[6],
-               color[0]*255,color[1]*255,color[2]*255,thick*self.factor)
+               color[0]*255,color[1]*255,color[2]*255,thick*self.factor), file=f)
         
       elif obj[0] == 3:    # line with its color and thickness
         itype = int(obj[1])
 	if itype > self.vizinfo.nlcolor:
-          raise StandardError,"line type too big"
+          raise Exception("line type too big")
         color = self.vizinfo.lcolor[itype]
         thick = self.vizinfo.lrad[itype]
-        print >>f,'<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="rgb(%s,%s,%s)" stroke-width="%s" />' % \
+        print('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="rgb(%s,%s,%s)" stroke-width="%s" />' % \
               (obj[2],obj[3],obj[5],obj[6],
-               color[0]*255,color[1]*255,color[2]*255,thick*self.factor)
+               color[0]*255,color[1]*255,color[2]*255,thick*self.factor), file=f)
 
       elif obj[0] == 4:    # box line with built-in color and thickness
         color = self.bxcol
         thick = self.bxthick
-        print >>f,'<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="rgb(%s,%s,%s)" stroke-width="%s" />' % \
+        print('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="rgb(%s,%s,%s)" stroke-width="%s" />' % \
               (obj[2],obj[3],obj[5],obj[6],
-               color[0]*255,color[1]*255,color[2]*255,thick*self.factor)
+               color[0]*255,color[1]*255,color[2]*255,thick*self.factor), file=f)
 
     elif flag == 1:
       x = (obj[0]*self.xpixels) + (self.xpixels/2.0)
       y = (self.ypixels/2.0) - (obj[1]*self.ypixels)
       color = obj[4]
-      print >>f,'<text x="%s" y="%s" font-size="%s" font-family="%s" stroke="rgb(%s,%s,%s)" fill="rgb(%s,%s,%s"> %s </text>' % \
+      print('<text x="%s" y="%s" font-size="%s" font-family="%s" stroke="rgb(%s,%s,%s)" fill="rgb(%s,%s,%s"> %s </text>' % \
               (x,y,obj[3],obj[2],color[0]*255,color[1]*255,color[2]*255,
-               color[0]*255,color[1]*255,color[2]*255,obj[5])
+               color[0]*255,color[1]*255,color[2]*255,obj[5]), file=f)
   
   # --------------------------------------------------------------------
 
   def adef(self):
-    self.vizinfo.setcolors("atom",range(100),"loop")
-    self.vizinfo.setradii("atom",range(100),0.45)
+    self.vizinfo.setcolors("atom",list(range(100)),"loop")
+    self.vizinfo.setradii("atom",list(range(100)),0.45)
  
   # --------------------------------------------------------------------
 
   def bdef(self):
-    self.vizinfo.setcolors("bond",range(100),"loop")
-    self.vizinfo.setradii("bond",range(100),0.25)
+    self.vizinfo.setcolors("bond",list(range(100)),"loop")
+    self.vizinfo.setradii("bond",list(range(100)),0.25)
     
   # --------------------------------------------------------------------
 
   def tdef(self):
-    self.vizinfo.setcolors("tri",range(100),"loop")  
-    self.vizinfo.setfills("tri",range(100),0)  
+    self.vizinfo.setcolors("tri",list(range(100)),"loop")  
+    self.vizinfo.setfills("tri",list(range(100)),0)  
 
   # --------------------------------------------------------------------
 
   def ldef(self):
-    self.vizinfo.setcolors("line",range(100),"loop")  
-    self.vizinfo.setradii("line",range(100),0.25)
+    self.vizinfo.setcolors("line",list(range(100)),"loop")  
+    self.vizinfo.setradii("line",list(range(100)),0.25)
 
   # --------------------------------------------------------------------
 

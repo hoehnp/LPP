@@ -84,12 +84,12 @@ class lpp:
     else: self.output = True
 
     if self.output:
-      print "starting LIGGGHTS memory optimized parallel post processing"
-      print "chunksize:", self.chunksize, "-->",self.chunksize,\
-        "files are processed per chunk. If you run out of memory reduce chunksize."
+      print("starting LIGGGHTS memory optimized parallel post processing")
+      print("chunksize:", self.chunksize, "-->",self.chunksize,\
+        "files are processed per chunk. If you run out of memory reduce chunksize.")
     starttime = time.time()    
 
-    if self.debugMode: print "number of process:", os.getpid()
+    if self.debugMode: print("number of process:", os.getpid())
     
     # check whether file-list is nonempty
     self.flist = []
@@ -109,7 +109,7 @@ class lpp:
       raise StandardError, "Cannot process single dump files with --no-overwrite."
     
     if self.output:
-      print "Working with", self.cpunum, "processes..."
+      print("Working with", self.cpunum, "processes...")
     
     # seperate list in pieces+rest
     self.slices = []
@@ -132,16 +132,16 @@ class lpp:
       "Nth":self.Nth} \
       for i in xrange(len(self.slices))]
     
-    if self.debugMode: print "dumpInput:",dumpInput
+    if self.debugMode: print("dumpInput:",dumpInput)
     
     numberOfRuns = len(dumpInput)
     i = 0
     while i < len(dumpInput):
 
       if self.output:    
-        print "calculating chunks",i+1,"-",min(i+self.cpunum,numberOfRuns),"of",numberOfRuns
+        print("calculating chunks",i+1,"-",min(i+self.cpunum,numberOfRuns),"of",numberOfRuns)
       
-      if self.debugMode: print "input of this \"map\": ",dumpInput[i:i+self.cpunum]
+      if self.debugMode: print("input of this \"map\": ",dumpInput[i:i+self.cpunum])
       
       # create job_server
       job_server = multiprocessing.Pool(processes = self.cpunum)
@@ -156,8 +156,8 @@ class lpp:
     
     endtime = time.time()
     if self.output:    
-      print "wrote", listlen,"granular snapshots in VTK format"
-      print "time needed:",endtime-starttime,"sec"
+      print("wrote", listlen,"granular snapshots in VTK format")
+      print("time needed:",endtime-starttime,"sec")
 
 def lppWorker(input):
   flist = input["filelist"]
@@ -221,7 +221,7 @@ def lppWorker(input):
 	    d.tselect.skip(Nth)
     d.delete()
     v = vtk.vtk(d)
-    if debugMode: print "\nfileNums: ",d.fileNums,"\n"
+    if debugMode: print("\nfileNums: ",d.fileNums,"\n")
     v.manyGran(granName,fileNos=d.fileNums,output=debugMode)
   except KeyboardInterrupt:
     raise
@@ -229,18 +229,18 @@ def lppWorker(input):
   return 0
 
 def printHelp():
-  print "usage: pizza [options] dump.example\n where dump.example is a filename",\
-    "or regular expression passing all relevant dump files to pizza."
-  print "Important command line options:"
-  print "-o fname    : define output file name (default is liggghts + timestep number)"
-  print "--chunksize : sets the chunksize, default: 8"
-  print "--cpunum    : sets the number of processes to start, default (and maximum)",\
-    "is the amout of cpu cores avaliable at your system"
-  print "--help      : writes this help message and exits"
-  print "--no-overwrite: disables overwriting of already post-processed files."
-  print "--timesteps: time steps to be converted, input as comma seperated list."
-  print "--Nth: every Nth time step will be converted, cannot be combined with timesteps."
-  print "For details, read README_GRANULAR.txt"
+  print("usage: pizza [options] dump.example\n where dump.example is a filename",\
+    "or regular expression passing all relevant dump files to pizza.")
+  print("Important command line options:")
+  print("-o fname    : define output file name (default is liggghts + timestep number)")
+  print("--chunksize : sets the chunksize, default: 8")
+  print("--cpunum    : sets the number of processes to start, default (and maximum)",\
+    "is the amout of cpu cores avaliable at your system")
+  print("--help      : writes this help message and exits")
+  print("--no-overwrite: disables overwriting of already post-processed files.")
+  print("--timesteps: time steps to be converted, input as comma seperated list.")
+  print("--Nth: every Nth time step will be converted, cannot be combined with timesteps.")
+  print("For details, read README_GRANULAR.txt")
 
 if __name__ == "__main__":
   if len(sys.argv) > 1:
@@ -253,16 +253,16 @@ if __name__ == "__main__":
       try:
         lpp(args,**optdict)
       except KeyboardInterrupt:
-        print "aborted by user"
+        print("aborted by user")
       except BaseException, e:
-        print "aborting due to errors:", e
+        print("aborting due to errors:", e)
 
     #===========================================================================
     # except:
     #  if sys.exc_type == exceptions.SystemExit:
     #    pass
     #  else: 
-    #    print sys.exc_info()
+    #    print(sys.exc_info())
     #===========================================================================
   else:
     printHelp()
