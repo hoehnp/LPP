@@ -18,7 +18,7 @@
 import sys
 from dump import dump
 from gnu import gnu
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
@@ -62,7 +62,7 @@ def distance(atom1,atom2,box):
 # main script
 
 if len(argv) < 6:
-  raise StandardError,"cluster.py type1 type2 cutoff nbin dump.1 dump.2 ..."
+  raise Exception("cluster.py type1 type2 cutoff nbin dump.1 dump.2 ...")
 
 type1 = int(argv[1])
 type2 = int(argv[2])
@@ -81,20 +81,20 @@ d.aselect.test("$type == %d or $type == %d" % (type1,type2))
 cutsq = cutoff*cutoff
 cluster = nbin*[0]
 
-print "Clustering ..."
+print("Clustering ...")
 
 flag = 0
 while 1:
   which,time,flag = d.iterator(flag)
   if flag == -1: break
   time,box,atoms,bonds,tris = d.viz(which)
-  print time,
+  print(time, end=' ')
   sys.stdout.flush()
 
   # loop over all type1 atoms
   
   n = len(atoms)
-  for i in xrange(n):
+  for i in range(n):
     itype = atoms[i][1]
     if itype != type1: continue
     ncount = 0
@@ -102,7 +102,7 @@ while 1:
     # loop over all type2 atoms
     # increment cluster count if distance is within cutoff
     
-    for j in xrange(n):
+    for j in range(n):
       jtype = atoms[j][1]
       if jtype != type2 or i == j: continue 
       distsq = distance(atoms[i],atoms[j],box)
@@ -113,9 +113,9 @@ while 1:
     if ncount >= nbin: cluster[nbin-1] += 1
     else: cluster[ncount] += 1
 
-print
-print "Cluster size and count:"
-for i in range(nbin): print i,cluster[i]
+print()
+print("Cluster size and count:")
+for i in range(nbin): print(i,cluster[i])
 
 # comment out if don't want plot
 

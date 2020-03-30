@@ -12,7 +12,7 @@
 from math import sqrt
 
 if len(argv) < 3:
-  raise StandardError,"distance.py maxcut dump.file1 dump.file2 ..."
+  raise Exception("distance.py maxcut dump.file1 dump.file2 ...")
   
 maxcut = float(argv[1])
 maxcut_sq = maxcut*maxcut
@@ -22,7 +22,7 @@ d = dump(files,0)
 d.map(1,"id",2,"type",3,"x",4,"y",5,"z")
 
 while 1:
-  time = d.next()
+  time = next(d)
   if time < 0: break
   d.unscale(time)
 
@@ -36,8 +36,8 @@ while 1:
   yprd = box[4] - box[1]
   zprd = box[5] - box[2]
   
-  for i in xrange(n):
-    for j in xrange(i+1,n):
+  for i in range(n):
+    for j in range(i+1,n):
   
       delx = x[j] - x[i]
       if abs(delx) > 0.5*xprd:
@@ -65,11 +65,11 @@ while 1:
           rsq = delx*delx + dely*dely + delz*delz
           
           if rsq < maxcut_sq: 
-            print "time = %d, id[i] = %d, id[j] = %d," \
+            print("time = %d, id[i] = %d, id[j] = %d," \
                " type[i] = %d, type[j] = %d, distance = %g" % \
-              (time, id[i], id[j], type[i], type[j], sqrt(rsq))
+              (time, id[i], id[j], type[i], type[j], sqrt(rsq)))
 
   d.tselect.none()
   d.tselect.one(time)
-  print "timestep = ", time
+  print("timestep = ", time)
   d.delete()

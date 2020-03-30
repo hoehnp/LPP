@@ -14,12 +14,12 @@
 
 import sys
 from dump import dump
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 5:
-  raise StandardError, "Syntax: flux.py x/y/z plane outfile files ..."
+  raise Exception("Syntax: flux.py x/y/z plane outfile files ...")
 
 direction = argv[1]
 scaled_plane = float(argv[2])
@@ -58,7 +58,7 @@ while 1:
   prd = hi - lo                
   plane = lo + scaled_plane*prd          
   
-  print time,
+  print(time, end=' ')
   sys.stdout.flush()
     
   natoms = len(x)
@@ -67,7 +67,7 @@ while 1:
 
   typeflux = ntypes * [0]
       
-  for i in xrange(natoms):
+  for i in range(natoms):
     id[i] = int(id[i])
     type[i] = int(type[i])
     if jconfig == 1: x_initial[id[i]] = x[i]
@@ -78,10 +78,10 @@ while 1:
        crossings = int((plane - x[i])/prd) + 1
        typeflux[type[i]] -= crossings
 
-  print >>f,time,
-  for j in xrange(ntypes-1):
-    print >>f,typeflux[j+1],
-  print >>f
-print
+  print(time, end=' ', file=f)
+  for j in range(ntypes-1):
+    print(typeflux[j+1], end=' ', file=f)
+  print(file=f)
+print()
   
 f.close()

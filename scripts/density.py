@@ -14,12 +14,12 @@
 
 import sys
 from dump import dump
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 5:
-  raise StandardError, "Syntax: density.py x/y/z nbin outfile files ..."
+  raise Exception("Syntax: density.py x/y/z nbin outfile files ...")
 
 direction = argv[1]
 nbins = int(argv[2])
@@ -34,14 +34,14 @@ d.map(1,"id",2,"type",3,"x",4,"y",5,"z")
 first = 1
 nsnaps = 0
 while 1:
-  time = d.next()
+  time = next(d)
   if time == -1: break
 
   if first:
     tmp,ntypes = d.minmax("type")
     ntypes = int(ntypes)
     bin = nbins * [0]
-    for i in xrange(nbins): bin[i] = ntypes * [0]
+    for i in range(nbins): bin[i] = ntypes * [0]
     first = 0
     
   box = (d.snaps[-1].xlo,d.snaps[-1].ylo,d.snaps[-1].zlo,
@@ -52,26 +52,26 @@ while 1:
   elif direction == "y": type,x = d.vecs(time,"type","y")
   elif direction == "z": type,x = d.vecs(time,"type","z")
   
-  type = map(int,type)
+  type = list(map(int,type))
   natoms = len(type)
-  for i in xrange(natoms): type[i] -= 1
+  for i in range(natoms): type[i] -= 1
   
-  for i in xrange(natoms):
+  for i in range(natoms):
     ibin = int(nbins*x[i] + 0.5)
     if (ibin < 0): ibin += nbins
     if (ibin > nbins-1): ibin -= nbins
     bin[ibin][type[i]] += nbins/vol
   nsnaps += 1
-  print time,
+  print(time, end=' ')
   
-print
-print "Printing ", direction, "-directional density distribution in mol/L to",outfile
+print()
+print("Printing ", direction, "-directional density distribution in mol/L to",outfile)
 conversion = 1660.53873              # convert from atoms/Angs^3 to mol/L
     
 fp = open(outfile,"w")
-for i in xrange(nbins):
-  print >>fp, float(i)/float(nbins), 
-  for j in xrange(ntypes):
-    print >>fp, conversion*bin[i][j]/nsnaps,
-  print >>fp 
+for i in range(nbins):
+  print(float(i)/float(nbins), end=' ', file=fp) 
+  for j in range(ntypes):
+    print(conversion*bin[i][j]/nsnaps, end=' ', file=fp)
+  print(file=fp) 
 fp.close()

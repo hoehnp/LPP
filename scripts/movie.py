@@ -15,12 +15,12 @@ import sys
 from dump import dump
 from raster import raster
 from svg import svg
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 5:
-  raise StandardError, "Syntax: movie.py raster/svg theta phi dump.1 ..."
+  raise Exception("Syntax: movie.py raster/svg theta phi dump.1 ...")
 
 style = argv[1]
 theta = float(argv[2])
@@ -28,6 +28,6 @@ phi = float(argv[3])
 files = ' '.join(argv[4:])
 
 d = dump(files)
-exec "viz = %s(d)" % style
+exec("viz = %s(d)" % style)
 viz.rotate(theta,phi)
 viz.all()

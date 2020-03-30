@@ -13,12 +13,12 @@
 
 import sys
 from log import log
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 4:
-  raise StandardError, "Syntax: block.py nblocks nskip log.1 log.2 ..."
+  raise Exception("Syntax: block.py nblocks nskip log.1 log.2 ...")
 
 nblocks = int(argv[1])
 nskip = int(argv[2])
@@ -35,8 +35,8 @@ if "Volume" in l.names:
   volume = l.get("Volume")
 else: vflag = 0
 
-print "Computing %g block averages" % nblocks
-print "Skipping first %g samples" % nskip
+print("Computing %g block averages" % nblocks)
+print("Skipping first %g samples" % nskip)
 
 n = len(step)
 n_per_block = (n-nskip)/nblocks
@@ -48,11 +48,11 @@ e_total_ave = []
 pressure_ave = []
 volume_ave = []
 
-print
-print " Block    Samples Temperature      E_bond      E_pair",  \
-  "    E_total    Pressure      Volume"
+print()
+print(" Block    Samples Temperature      E_bond      E_pair",  \
+  "    E_total    Pressure      Volume")
 
-for i in xrange(nblocks):
+for i in range(nblocks):
   temperature_sum = 0
   e_bond_sum = 0
   e_pair_sum = 0
@@ -60,7 +60,7 @@ for i in xrange(nblocks):
   pressure_sum = 0
   volume_sum = 0
   samples = 0
-  for j in xrange(n_per_block): 
+  for j in range(n_per_block): 
     temperature_sum += temperature[k]
     e_bond_sum += e_bond[k]
     e_pair_sum += e_pair[k]
@@ -75,9 +75,9 @@ for i in xrange(nblocks):
   e_total_ave.append(e_total_sum/samples)
   pressure_ave.append(pressure_sum/samples)
   volume_ave.append(volume_sum/samples)
-  print " %5i %10i %11.2f %11.2f %11.2f %11.2f %11.2f %11.2f" %  \
+  print(" %5i %10i %11.2f %11.2f %11.2f %11.2f %11.2f %11.2f" %  \
     (i+1, samples, temperature_ave[i], e_bond_ave[i], e_pair_ave[i], \
-    e_total_ave[i], pressure_ave[i], volume_ave[i])
+    e_total_ave[i], pressure_ave[i], volume_ave[i]))
 
 grand_ave_temperature = 0.0
 grand_ave_e_bond = 0.0
@@ -91,7 +91,7 @@ stdev_e_pair = 0.0
 stdev_e_total = 0.0
 stdev_pressure = 0.0
 stdev_volume = 0.0 
-for i in xrange(nblocks):
+for i in range(nblocks):
   grand_ave_temperature += temperature_ave[i]
   grand_ave_e_bond += e_bond_ave[i]
   grand_ave_e_pair += e_pair_ave[i]
@@ -104,7 +104,7 @@ grand_ave_e_pair /= nblocks
 grand_ave_e_total /= nblocks
 grand_ave_pressure /= nblocks
 grand_ave_volume /= nblocks 
-for i in xrange(nblocks):
+for i in range(nblocks):
   stdev_temperature += (temperature_ave[i] - grand_ave_temperature)*  \
                        (temperature_ave[i] - grand_ave_temperature)
   stdev_e_bond += (e_bond_ave[i] - grand_ave_e_bond)*  \
@@ -125,13 +125,13 @@ stdev_e_total = sqrt(stdev_e_total/(nblocks-1))
 stdev_pressure = sqrt(stdev_pressure/(nblocks-1))
 stdev_volume = sqrt(stdev_volume/(nblocks-1)) 
 
-print " ====================================================",  \
-  "==================================="
+print(" ====================================================",  \
+  "===================================")
   
-print " Ave.             %11.2f %11.2f %11.2f %11.2f %11.2f %11.2f" % \
+print(" Ave.             %11.2f %11.2f %11.2f %11.2f %11.2f %11.2f" % \
     (grand_ave_temperature, grand_ave_e_bond, grand_ave_e_pair, \
-    grand_ave_e_total, grand_ave_pressure, grand_ave_volume)
+    grand_ave_e_total, grand_ave_pressure, grand_ave_volume))
     
-print " Stdev            %11.2f %11.2f %11.2f %11.2f %11.2f %11.2f" % \
+print(" Stdev            %11.2f %11.2f %11.2f %11.2f %11.2f %11.2f" % \
     (stdev_temperature, stdev_e_bond, stdev_e_pair, \
-    stdev_e_total, stdev_pressure, stdev_volume)
+    stdev_e_total, stdev_pressure, stdev_volume))
