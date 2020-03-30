@@ -9,4 +9,4 @@ dm.extra(b)
 g = gl(dm)
 v = vcr(g)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

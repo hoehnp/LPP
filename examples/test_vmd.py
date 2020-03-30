@@ -8,4 +8,4 @@ v.rep('VDW')
 v.new('files/peptide.pdb','pdb')
 v.flush()
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

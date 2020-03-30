@@ -31,4 +31,4 @@ c.select("A","B","C","linebox","organelle","nuchalf")
 g = gl(c)
 v = vcr(g)
  
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

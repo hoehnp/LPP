@@ -14,4 +14,4 @@ c.build(10,25)
 
 c.write("tmp.data.chain")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

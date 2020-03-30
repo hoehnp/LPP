@@ -3,7 +3,7 @@
 
 m = matlab()
 
-a = range(10)
+a = list(range(10))
 b = [3,6,2,5,7,3,6,5,3,1]
 
 m.plot(a)
@@ -30,4 +30,4 @@ m.ylog()
 
 m.save("tmp")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

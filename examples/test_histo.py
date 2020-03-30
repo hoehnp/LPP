@@ -10,4 +10,4 @@ g.ytitle("Particle Count")
 g.title("Histogram of Particle Density")
 g.plot(x,y)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

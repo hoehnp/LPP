@@ -8,4 +8,4 @@ e.one()
 e.many()
 e.single(0)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

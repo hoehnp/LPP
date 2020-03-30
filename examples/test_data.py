@@ -5,14 +5,14 @@
 d = data("files/data.micelle")
 d.map(1,"id",3,"type",4,"x",5,"y",6,"z")
 coeffs = d.get("Masses")
-print "Masses",coeffs
+print("Masses",coeffs)
 x = d.get("Atoms",4)
-print "X of 1st atom",x[0]
+print("X of 1st atom",x[0])
 
 d.title = "New LAMMPS data file"
 
 natoms = d.headers["atoms"]
-vec = range(1,natoms+1)
+vec = list(range(1,natoms+1))
 vec.reverse()
 d.replace("Atoms",1,vec)
 
@@ -27,4 +27,4 @@ while 1:
   
 d.write("tmp.data")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

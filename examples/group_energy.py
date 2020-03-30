@@ -37,7 +37,7 @@ def distance(box,x1,y1,z1,x2,y2,z2):
 # main script
 
 if len(argv) < 3:
-  raise StandardError,"group_energy.py data.file dump.file1 dump.file2 ..."
+  raise Exception("group_energy.py data.file dump.file1 dump.file2 ...")
 
 dt = data(argv[1])				# data file
 q = dt.get("Atoms",4)
@@ -62,7 +62,7 @@ if cut4 > maxcut: maxcut = cut4
 maxcut_sq = maxcut*maxcut
 
 while 1:
-  time = d.next()
+  time = next(d)
   if time < 0: break
   d.unscale(time)
 
@@ -75,32 +75,32 @@ while 1:
   d.aselect.test("$id >= 1 and $id <= 7243 or $id >= 7274 and $id <= 14283",
                  time)
   id2,type2,x2,y2,z2 = d.vecs(time,"id","type","x","y","z")
-  id1 = map(int,id1)
-  id2 = map(int,id2)
-  type1 = map(int,type1)
-  type2 = map(int,type2)
+  id1 = list(map(int,id1))
+  id2 = list(map(int,id2))
+  type1 = list(map(int,type1))
+  type2 = list(map(int,type2))
   n1 = len(type1)
   n2 = len(type2)
-  for i in xrange(n1): 
+  for i in range(n1): 
     id1[i] -= 1
     type1[i] -= 1
-  for i in xrange(n2): 
+  for i in range(n2): 
     id2[i] -= 1
     type2[i] -= 1
 
   e_coul_sum = 0.0
   e_vdwl_sum = 0.0
-  for i in xrange(n1):
+  for i in range(n1):
     typei = type1[i]
     qi = q[id1[i]]
-    for j in xrange(n2):
+    for j in range(n2):
       rsq = distance(box,x1[i],y1[i],z1[i],x2[j],y2[j],z2[j])
       if rsq < maxcut_sq:
         eng_coul,eng_vdwl = p.single(rsq,typei,type2[j],qi,q[id2[j]])
         e_coul_sum += eng_coul     
         e_vdwl_sum += eng_vdwl    
-  print "eng_coul = %g at timestep %d" % (e_coul_sum,time)
-  print "eng_vdwl = %g at timestep %d" % (e_vdwl_sum,time)
+  print("eng_coul = %g at timestep %d" % (e_coul_sum,time))
+  print("eng_vdwl = %g at timestep %d" % (e_vdwl_sum,time))
 
   d.tselect.none()
   d.tselect.one(time)

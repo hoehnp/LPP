@@ -7,4 +7,4 @@ p.build(100,"hex2",1,2,3)
 p.build(50,"tri5",4,5)
 p.write("tmp.data.patch")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")
