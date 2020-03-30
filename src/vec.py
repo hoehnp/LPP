@@ -53,7 +53,7 @@ class vec:
   def __init__(self,data):
     self.data = []
     
-    if type(data) == types.StringType:
+    if type(data) == bytes:
       lines = open(data,'r').readlines()
       for line in lines:
         words = line.split()
