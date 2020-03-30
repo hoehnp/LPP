@@ -44,7 +44,7 @@ class lpp:
           self.chunksize = int(kwargs["--chunksize"])
         else: raise ValueError
       except ValueError:
-        raise ValueError, "Invalid or no argument given for chunksize"
+        raise ValueError("Invalid or no argument given for chunksize")
 
     if "--Nth" in kwargs:
       try:
@@ -52,7 +52,7 @@ class lpp:
           self.Nth = int(kwargs["--Nth"])
         else: raise ValueError
       except ValueError:
-        raise ValueError, "Invalid or no argument given for Nth"
+        raise ValueError("Invalid or no argument given for Nth")
 
     if "--timesteps" in kwargs:
       try:
@@ -60,7 +60,7 @@ class lpp:
           self.timesteps = kwargs["--timesteps"]
         #else: raise ValueError
       except ValueError:
-        raise ValueError, "Invalid or no argument given for timesteps"
+        raise ValueError("Invalid or no argument given for timesteps")
 
     if "--cpunum" in kwargs: 
       try:
@@ -68,7 +68,7 @@ class lpp:
           self.cpunum = int(kwargs["--cpunum"])
         else: raise ValueError
       except ValueError:
-        raise ValueError, "Invalid or no argument given for cpunum"
+        raise ValueError("Invalid or no argument given for cpunum")
 
     # do not overwrite existing files
     if "--no-overwrite" in kwargs:
@@ -104,9 +104,9 @@ class lpp:
       self.flist = list[0]
     listlen = len(self.flist)
     if listlen == 0 and len(list) == 1:
-      raise StandardError, "no dump file specified"
+      raise Exception("no dump file specified")
     if listlen == 1 and self.overwrite == False:
-      raise StandardError, "Cannot process single dump files with --no-overwrite."
+      raise Exception("Cannot process single dump files with --no-overwrite.")
     
     if self.output:
       print("Working with", self.cpunum, "processes...")
@@ -116,7 +116,7 @@ class lpp:
     
     residualPresent = int(bool(listlen-floor(listlen/self.chunksize)*self.chunksize))
     
-    for i in xrange(int(floor(listlen/self.chunksize))+residualPresent):
+    for i in range(int(floor(listlen/self.chunksize))+residualPresent):
       slice = self.flist[i*self.chunksize:(i+1)*self.chunksize]
       self.slices.append(slice)
     self.flist = []
@@ -130,7 +130,7 @@ class lpp:
       "overwrite":self.overwrite, \
       "timesteps":self.timesteps, \
       "Nth":self.Nth} \
-      for i in xrange(len(self.slices))]
+      for i in range(len(self.slices))]
     
     if self.debugMode: print("dumpInput:",dumpInput)
     
@@ -254,7 +254,7 @@ if __name__ == "__main__":
         lpp(args,**optdict)
       except KeyboardInterrupt:
         print("aborted by user")
-      except BaseException, e:
+      except BaseException as e:
         print("aborting due to errors:", e)
 
     #===========================================================================

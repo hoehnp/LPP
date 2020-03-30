@@ -74,7 +74,7 @@ class pdbfile:
 
   def __init__(self,*args):
     if len(args) == 1:
-      if type(args[0]) is types.StringType:
+      if type(args[0]) is bytes:
         filestr = args[0]
         self.data = None
       else:

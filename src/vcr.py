@@ -320,7 +320,7 @@ class vcr:
   # --------------------------------------------------------------------
 
   def q(self,value):
-    if type(value) is not types.IntType: value = self.slider_quality.get()
+    if type(value) is not int: value = self.slider_quality.get()
     self.slider_quality.set(value)
     for view in self.viewlist: view.q(value)
 

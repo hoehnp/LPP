@@ -328,7 +328,7 @@ def particleGran(file,atoms,names,n_values):
   for atom in atoms:
     print(atom[vectors['x']], atom[vectors['x']+1], atom[vectors['x']+2] #atom[3],atom[4],atom[5]  #write x,y,z  [atom[0]=id, atom[1]=type], file=f)
   print("VERTICES",len(atoms),2*len(atoms), file=f)
-  for i in xrange(len(atoms)):
+  for i in range(len(atoms)):
     print(1,i, file=f)
   print("POINT_DATA",len(atoms), file=f)
   
@@ -387,7 +387,7 @@ def findScalarsAndVectors(names):
     indices[names[name]]=name
   
   # fill missing indices (occurrs e.g. if output is like vx vy vz fx fy fz vx vy vz)
-  for i in xrange(max(indices)):
+  for i in range(max(indices)):
     if i not in indices:
       indices[i]=""
   

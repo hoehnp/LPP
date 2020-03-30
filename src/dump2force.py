@@ -73,7 +73,8 @@ groupfile = os.path.join(inputdir,groupfile)
 groupfile = VtkGroup(groupfile)
 
 fileindex = 0
-timestep = forcedata.next()
+timestep = next(forcedata)
+
 
 # check that we have the right number of colums (>11)
 #
@@ -104,7 +105,7 @@ while timestep >= 0:
     if forcedata.snaps[fileindex].natoms == 0:  
         vtufile = fileprefix+'_'+str(timestep)+'.vtu'
         vtufile = os.path.join(outputdir,vtufile)
-        vtuwrite = file(vtufile,'w')
+        vtuwrite = open(vtufile,'w')
         vtuwrite.write("""<?xml version="1.0"?>
 <VTKFile byte_order="LittleEndian" version="0.1" type="UnstructuredGrid">
 <UnstructuredGrid>
@@ -134,8 +135,8 @@ while timestep >= 0:
         nconnex = ncells - nperiodic
 
         # extract the IDs as an array of integers
-        id1 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id1"]],dtype=long)
-        id2 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id2"]],dtype=long)
+        id1 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id1"]],dtype=int)
+        id2 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id2"]],dtype=int)
 
         # and convert to lists
         id1 = id1.tolist()
@@ -320,7 +321,7 @@ while timestep >= 0:
     groupfile.addFile(filepath = os.path.relpath(vtufile,inputdir), sim_time = timestep)
 
     fileindex += 1
-    timestep = forcedata.next()
+    timestep = next(forcedata)
 
 # end of main loop - close group file
 groupfile.save()
