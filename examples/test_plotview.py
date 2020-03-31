@@ -15,4 +15,4 @@ p.no(2)
 p.file("tmp.plotview")
 p.save()
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

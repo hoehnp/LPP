@@ -17,13 +17,12 @@
 import sys
 from dump import dump
 from math import sqrt
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 7:
-  raise StandardError, \
-   "Syntax: bond_distribute.py datafile nbin rmin rmax outfile files ..."
+  raise Exception("Syntax: bond_distribute.py datafile nbin rmin rmax outfile files ...")
 
 dt = data(argv[1])	
 nbins = int(argv[2])
@@ -39,17 +38,17 @@ nbonds = len(bond)
 btype = nbonds * [0]
 iatom = nbonds * [0]
 jatom = nbonds * [0]
-for i in xrange(nbonds):
+for i in range(nbonds):
   btype[i] = int(bond[i][1] - 1)
   iatom[i] = int(bond[i][2] - 1)
   jatom[i] = int(bond[i][3] - 1)
 
 ntypes = 0
-for i in xrange(nbonds): ntypes = max(bond[i][1],ntypes)
+for i in range(nbonds): ntypes = max(bond[i][1],ntypes)
 ntypes = int(ntypes)
 ncount = ntypes * [0]
 bin = nbins * [0]
-for i in xrange(nbins): 
+for i in range(nbins): 
   bin[i] = ntypes * [0] 
 
 # read snapshots one-at-a-time
@@ -58,7 +57,7 @@ d = dump(files,0)
 d.map(1,"id",2,"type",3,"x",4,"y",5,"z")
 
 while 1:
-  time = d.next()
+  time = next(d)
   if time == -1: break
    
   box = (d.snaps[-1].xlo,d.snaps[-1].ylo,d.snaps[-1].zlo,
@@ -72,7 +71,7 @@ while 1:
   d.sort()
   x,y,z = d.vecs(time,"x","y","z")
    
-  for i in xrange(nbonds):
+  for i in range(nbonds):
   
     delx = x[jatom[i]] - x[iatom[i]]
     dely = y[jatom[i]] - y[iatom[i]]
@@ -101,22 +100,22 @@ while 1:
       bin[ibin][btype[i]] += nbins
       ncount[btype[i]] += 1
     else:
-      print "Warning: bond distance outside specified range"
-      print "Bond type:", btype[i]+1
-      print "Bond number:", i
-  print time,    
+      print("Warning: bond distance outside specified range")
+      print("Bond type:", btype[i]+1)
+      print("Bond number:", i)
+  print(time, end=' ')    
       
-print
-print "Printing bond distance normalized distribution to",outfile
+print()
+print("Printing bond distance normalized distribution to",outfile)
     
 fp = open(outfile,"w")
 rrange = rmax - rmin
-for i in xrange(nbins):
-  print >>fp, rmin + rrange*float(i)/float(nbins), 
-  for j in xrange(ntypes):
+for i in range(nbins):
+  print(rmin + rrange*float(i)/float(nbins), end=' ', file=fp) 
+  for j in range(ntypes):
     if (ncount[j] > 0):
-      print >>fp, float(bin[i][j])/float(ncount[j])/rrange,
+      print(float(bin[i][j])/float(ncount[j])/rrange, end=' ', file=fp)
     else:
-      print >>fp, 0.0,    
-  print >>fp 
+      print(0.0, end=' ', file=fp)    
+  print(file=fp) 
 fp.close()

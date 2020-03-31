@@ -15,6 +15,6 @@ while 1:
   p.single(time,"tmp.single")
   n += 1
 
-print "Incrementally processed %d PDB files" % n
+print("Incrementally processed %d PDB files" % n)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

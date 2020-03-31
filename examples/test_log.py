@@ -4,13 +4,13 @@
 
 lg = log("files/log.obstacle")
 
-print "# of vectors =",lg.nvec
-print "length of vectors =",lg.nlen
-print "names of vectors =",lg.names
+print("# of vectors =",lg.nvec)
+print("length of vectors =",lg.nlen)
+print("names of vectors =",lg.names)
 
 time,temp,press = lg.get("Step","Temp","Press")
-print temp,press
+print(temp,press)
 lg.write("tmp.log")
 lg.write("tmp.log.two","Step","E_pair")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

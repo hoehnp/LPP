@@ -4,6 +4,6 @@
 i = image("files/bucky*.png")
 i.convert("files/bucky*.png","tmp*.gif")
 i.montage("","files/bucky*.png","tmp*.gif","tmpnew*.png")
-i.view("")
+i.view("*.png")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

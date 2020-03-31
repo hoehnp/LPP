@@ -17,13 +17,12 @@
 import sys
 from dump import dump
 from math import sqrt,acos,atan
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 7:
-  raise StandardError, \
-  "Syntax: angle_distribute.py datafile nbin theta_min theta_max outfile files ..."
+  raise Exception("Syntax: angle_distribute.py datafile nbin theta_min theta_max outfile files ...")
 
 dt = data(argv[1])	
 nbins = int(argv[2])
@@ -40,18 +39,18 @@ atype = nangles * [0]
 iatom = nangles * [0]
 jatom = nangles * [0]
 katom = nangles * [0]
-for i in xrange(nangles):
+for i in range(nangles):
   atype[i] = int(angle[i][1] - 1)
   iatom[i] = int(angle[i][2] - 1)
   jatom[i] = int(angle[i][3] - 1)
   katom[i] = int(angle[i][4] - 1)
 
 ntypes = 0
-for i in xrange(nangles): ntypes = max(angle[i][1],ntypes)
+for i in range(nangles): ntypes = max(angle[i][1],ntypes)
 ntypes = int(ntypes)
 ncount = ntypes * [0]
 bin = nbins * [0]
-for i in xrange(nbins): 
+for i in range(nbins): 
   bin[i] = ntypes * [0] 
 
 # read snapshots one-at-a-time
@@ -62,7 +61,7 @@ d.map(1,"id",2,"type",3,"x",4,"y",5,"z")
 PI = 4.0*atan(1.0)
 
 while 1:
-  time = d.next()
+  time = next(d)
   if time == -1: break
    
   box = (d.snaps[-1].xlo,d.snaps[-1].ylo,d.snaps[-1].zlo,
@@ -76,7 +75,7 @@ while 1:
   d.sort()
   x,y,z = d.vecs(time,"x","y","z")
    
-  for i in xrange(nangles):
+  for i in range(nangles):
   
     delx1 = x[iatom[i]] - x[jatom[i]]
     dely1 = y[iatom[i]] - y[jatom[i]]
@@ -135,22 +134,22 @@ while 1:
       bin[ibin][atype[i]] += nbins
       ncount[atype[i]] += 1
     else:
-      print "Warning: angle outside specified range"
-      print "angle type:", atype[i]+1
-      print "angle number:", i
-  print time,    
+      print("Warning: angle outside specified range")
+      print("angle type:", atype[i]+1)
+      print("angle number:", i)
+  print(time, end=' ')    
       
-print
-print "Printing normalized angle distributions to",outfile
+print()
+print("Printing normalized angle distributions to",outfile)
     
 fp = open(outfile,"w")
 theta_range = theta_max - theta_min
-for i in xrange(nbins):
-  print >>fp, theta_min + theta_range*float(i)/float(nbins), 
-  for j in xrange(ntypes):
+for i in range(nbins):
+  print(theta_min + theta_range*float(i)/float(nbins), end=' ', file=fp) 
+  for j in range(ntypes):
     if (ncount[j] > 0):
-      print >>fp, float(bin[i][j])/float(ncount[j])/theta_range,
+      print(float(bin[i][j])/float(ncount[j])/theta_range, end=' ', file=fp)
     else:
-      print >>fp, 0.0,    
-  print >>fp 
+      print(0.0, end=' ', file=fp)    
+  print(file=fp) 
 fp.close()

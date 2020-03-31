@@ -27,6 +27,7 @@ and dump match the format here - this will be checked in future!
 
 """
 
+from __future__ import absolute_import
 from evtk.vtk import VtkFile, VtkGroup, VtkUnstructuredGrid
 from bdump import bdump
 import numpy as np
@@ -73,14 +74,15 @@ groupfile = os.path.join(inputdir,groupfile)
 groupfile = VtkGroup(groupfile)
 
 fileindex = 0
-timestep = forcedata.next()
+timestep = next(forcedata)
+
 
 # check that we have the right number of colums (>11)
 #
 # NOTE: the first timesteps are often blank, and then natoms returns 0, so this doesn't really work...
 #
 if forcedata.snaps[fileindex].natoms !=0 and len(forcedata.snaps[0].atoms[0]) < 12:
-    print "Error - dump file requires at least all parameters from a compute pair/gran/local id pos force (12 in total)"
+    print("Error - dump file requires at least all parameters from a compute pair/gran/local id pos force (12 in total)")
     sys.exit()
 
 # loop through available timesteps
@@ -104,7 +106,7 @@ while timestep >= 0:
     if forcedata.snaps[fileindex].natoms == 0:  
         vtufile = fileprefix+'_'+str(timestep)+'.vtu'
         vtufile = os.path.join(outputdir,vtufile)
-        vtuwrite = file(vtufile,'w')
+        vtuwrite = open(vtufile,'w')
         vtuwrite.write("""<?xml version="1.0"?>
 <VTKFile byte_order="LittleEndian" version="0.1" type="UnstructuredGrid">
 <UnstructuredGrid>
@@ -134,8 +136,8 @@ while timestep >= 0:
         nconnex = ncells - nperiodic
 
         # extract the IDs as an array of integers
-        id1 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id1"]],dtype=long)
-        id2 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id2"]],dtype=long)
+        id1 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id1"]],dtype=int)
+        id2 = np.array(forcedata.snaps[fileindex].atoms[:,forcedata.names["id2"]],dtype=int)
 
         # and convert to lists
         id1 = id1.tolist()
@@ -153,7 +155,7 @@ while timestep >= 0:
         # number of points = number of unique IDs (particles)
         npoints = len(ids)
 
-        print 'Timestep:',str(timestep),'npoints=',str(npoints),'ncells=',str(ncells),'nperiodic=',nperiodic, 'nconnex=',str(nconnex)
+        print('Timestep:',str(timestep),'npoints=',str(npoints),'ncells=',str(ncells),'nperiodic=',nperiodic, 'nconnex=',str(nconnex))
 
 
         # ******************************************
@@ -320,7 +322,7 @@ while timestep >= 0:
     groupfile.addFile(filepath = os.path.relpath(vtufile,inputdir), sim_time = timestep)
 
     fileindex += 1
-    timestep = forcedata.next()
+    timestep = next(forcedata)
 
 # end of main loop - close group file
 groupfile.save()

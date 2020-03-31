@@ -9,4 +9,4 @@ x.one()
 x.many()
 x.single(0,"tmp.single")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

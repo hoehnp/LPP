@@ -18,12 +18,12 @@
 import sys
 import numpy as np
 from dump import dump
-if not globals().has_key("argv"): argv = sys.argv
+if "argv" not in globals(): argv = sys.argv
 
 # main script
 
 if len(argv) < 5:
-    raise StandardError, "Syntax: density.py x/y/z nbin vmin vmax outfile files ..."
+    raise Exception("Syntax: density.py x/y/z nbin vmin vmax outfile files ...")
 
 direction = argv[1]
 nbins = int(argv[2])
@@ -57,7 +57,7 @@ y0 = 0
 vol = 0
 
 while 1:
-    time = d.next()
+    time = next(d)
     if time == -1: break
 
     if first:
@@ -102,11 +102,11 @@ while 1:
         zmin = max(zmin,box[0])
     vol = dx * dy * float(zmax - zmin)
 
-    type = map(int,type)
+    type = list(map(int,type))
     natoms = len(type)
-    for i in xrange(natoms): type[i] -= 1
+    for i in range(natoms): type[i] -= 1
     
-    for i in xrange(natoms):
+    for i in range(natoms):
         ibin = int(nbins*x[i])
         jbin = int(nbins*y[i])
         zloc = float(z[i])*float(dz)
@@ -117,10 +117,10 @@ while 1:
         if (jbin > nbins-1): jbin = nbins - 1
         bin[jbin][ibin][type[i]] += nbins*nbins/vol
     nsnaps += 1
-    print time,
+    print(time, end=' ')
 
-print 
-print "Printing %s-mapped density distribution for %s-slice [%.2f,%.2f] in mol/L to %s" %(bidirect, direction, zmin, zmax, outfile)
+print() 
+print("Printing %s-mapped density distribution for %s-slice [%.2f,%.2f] in mol/L to %s" %(bidirect, direction, zmin, zmax, outfile))
 conversion = 1660.53873  # convert from atoms/Angs^3 to mol/L
         
 fp = open(outfile,"w")
@@ -129,10 +129,10 @@ fp = open(outfile,"w")
 # for k in xrange(ntypes):
 #     print >>fp, " %8s " %(k),
 # print >>fp
-for i in xrange(nbins):
-    for j in xrange(nbins):
-        print >>fp, " %8.3f  %8.3f " %(float(i)/float(nbins)*float(dx)+float(x0), float(j)/float(nbins)*float(dy)+float(y0)),
-        for k in xrange(ntypes):
-            print >>fp, " %8.3f " % (conversion*bin[j][i][k]/nsnaps),
-        print >>fp 
+for i in range(nbins):
+    for j in range(nbins):
+        print(" %8.3f  %8.3f " %(float(i)/float(nbins)*float(dx)+float(x0), float(j)/float(nbins)*float(dy)+float(y0)), end=' ', file=fp)
+        for k in range(ntypes):
+            print(" %8.3f " % (conversion*bin[j][i][k]/nsnaps), end=' ', file=fp)
+        print(file=fp) 
 fp.close()

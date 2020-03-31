@@ -12,4 +12,4 @@ g.lrad(1,5)
 g.lcol(1,"green")
 v = vcr(g)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

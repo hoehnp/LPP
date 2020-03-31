@@ -126,7 +126,8 @@ m.etype = "color"                          set column returned as "type" by viz
 
 # Imports and external programs
 
-import sys, commands, re, glob, types
+from __future__ import absolute_import
+import sys, subprocess, re, glob, types
 from os import popen
 from math import *             # any function could be used by set()
 
@@ -160,7 +161,7 @@ class mdump:
     self.flist = []
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
-      raise StandardError,"no dump file specified"
+      raise Exception("no dump file specified")
     
     if len(list) == 1:
       self.increment = 0
@@ -185,12 +186,12 @@ class mdump:
       snap = self.read_snapshot(f)
       while snap:
         self.snaps.append(snap)
-        print snap.time,
+        print(snap.time, end=' ')
         sys.stdout.flush()
         snap = self.read_snapshot(f)
 
       f.close()
-    print
+    print()
 
     # sort entries by timestep, cull and combine duplicates
 
@@ -204,25 +205,25 @@ class mdump:
         array = snap.nodes
         ids = array[:,0]
         ordering = np.argsort(ids)
-        for i in xrange(len(array[0])):
+        for i in range(len(array[0])):
           array[:,i] = np.take(array[:,i],ordering)
       if snap.eflag:
         array = snap.elements
         ids = array[:,0]
         ordering = np.argsort(ids)
-        for i in xrange(len(array[0])):
+        for i in range(len(array[0])):
           array[:,i] = np.take(array[:,i],ordering)
       if snap.nvalueflag:
         array = snap.nvalues
         ids = array[:,0]
         ordering = np.argsort(ids)
-        for i in xrange(len(array[0])):
+        for i in range(len(array[0])):
           array[:,i] = np.take(array[:,i],ordering)
       if snap.evalueflag:
         array = snap.evalues
         ids = array[:,0]
         ordering = np.argsort(ids)
-        for i in xrange(len(array[0])):
+        for i in range(len(array[0])):
           array[:,i] = np.take(array[:,i],ordering)
 
     # reference definitions of nodes and elements in previous timesteps
@@ -230,7 +231,7 @@ class mdump:
     self.reference()
     
     self.nsnaps = len(self.snaps)
-    print "read %d snapshots" % self.nsnaps
+    print("read %d snapshots" % self.nsnaps)
 
     # select all timesteps and elements
 
@@ -241,7 +242,7 @@ class mdump:
 
   def next(self):
 
-    if not self.increment: raise StandardError,"cannot read incrementally"
+    if not self.increment: raise Exception("cannot read incrementally")
 
     # read next snapshot in current file using eof as pointer
     # if fail, try next file
@@ -271,7 +272,7 @@ class mdump:
     snap.tselect = 1
     snap.nselect = snap.nelements
     if snap.eflag:
-      for i in xrange(snap.nelements): snap.eselect[i] = 1
+      for i in range(snap.nelements): snap.eselect[i] = 1
     self.nsnaps += 1
     self.nselect += 1
 
@@ -295,7 +296,7 @@ class mdump:
       elif "NUMBER OF CUBES" in str: snap.eflag = 4
       elif "NUMBER OF NODE VALUES" in str: snap.nvalueflag = 1
       elif "NUMBER OF ELEMENT VALUES" in str: snap.evalueflag = 1
-      else: raise StandardError,"unrecognized snapshot in dump file"
+      else: raise Exception("unrecognized snapshot in dump file")
       n = int(f.readline())
 
       if snap.eflag: snap.eselect = np.zeros(n)
@@ -313,14 +314,14 @@ class mdump:
       if n:
         words = f.readline().split()
         ncol = len(words)
-        for i in xrange(1,n):
+        for i in range(1,n):
           words += f.readline().split()
-        floats = map(float,words)
+        floats = list(map(float,words))
         if oldnumeric: values = np.zeros((n,ncol),np.Float)
         else: values = np.zeros((n,ncol),np.float)
         start = 0
         stop = ncol
-        for i in xrange(n):
+        for i in range(n):
           values[i] = floats[start:stop]
           start = stop
           stop += ncol
@@ -343,7 +344,7 @@ class mdump:
   
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
-      raise StandardError, "mdump map() requires pairs of mappings"
+      raise Exception("mdump map() requires pairs of mappings")
     for i in range(0,len(pairs),2):
       j = i + 1
       self.names[pairs[j]] = pairs[i]-1
@@ -360,15 +361,15 @@ class mdump:
         self.nsnaps -= 1
         ndel += 1
       else: i += 1
-    print "%d snapshots deleted" % ndel
-    print "%d snapshots remaining" % self.nsnaps
+    print("%d snapshots deleted" % ndel)
+    print("%d snapshots remaining" % self.nsnaps)
 
   # --------------------------------------------------------------------
   # sort elements by ID in all selected timesteps or one timestep
 
   def sort(self,*list):
     if len(list) == 0:
-      print "Sorting selected snapshots ..."
+      print("Sorting selected snapshots ...")
       id = self.names["id"]
       for snap in self.snaps:
         if snap.tselect: self.sort_one(snap,id)
@@ -385,7 +386,7 @@ class mdump:
     atoms = snap.atoms
     ids = atoms[:,id]
     ordering = np.argsort(ids)
-    for i in xrange(len(atoms[0])):
+    for i in range(len(atoms[0])):
       atoms[:,i] = np.take(atoms[:,i],ordering)
 
   # --------------------------------------------------------------------
@@ -406,10 +407,10 @@ class mdump:
   def vecs(self,n,*list):
     snap = self.snaps[self.findtime(n)]
     if not snap.evalues:
-      raise StandardError, "snapshot has no element values"
+      raise Exception("snapshot has no element values")
       
     if len(list) == 0:
-      raise StandardError, "no columns specified"
+      raise Exception("no columns specified")
     columns = []
     values = []
     for name in list:
@@ -418,9 +419,9 @@ class mdump:
     ncol = len(columns)
 
     m = 0
-    for i in xrange(len(snap.evalues)):
+    for i in range(len(snap.evalues)):
       if not snap.eselect[i]: continue
-      for j in xrange(ncol):
+      for j in range(ncol):
         values[j][m] = snap.evalues[i][columns[j]]
       m += 1
 
@@ -482,9 +483,9 @@ class mdump:
   # if not, point it at most recent shapshot that does
   
   def reference(self):
-    for i in xrange(len(self.snaps)):
+    for i in range(len(self.snaps)):
       if not self.snaps[i].nflag:
-        for j in xrange(i,-1,-1):
+        for j in range(i,-1,-1):
           if self.snaps[j].nflag:
             self.snaps[i].nflag = self.snaps[j].nflag
             self.snaps[i].nnodes = self.snaps[j].nnodes
@@ -497,9 +498,9 @@ class mdump:
             self.snaps[i].zhi = self.snaps[j].zhi
             break
       if not self.snaps[i].nflag:
-        raise StandardError,"no nodal coords found in previous snapshots"
+        raise Exception("no nodal coords found in previous snapshots")
       if not self.snaps[i].eflag:
-        for j in xrange(i,-1,-1):
+        for j in range(i,-1,-1):
           if self.snaps[j].eflag:
             self.snaps[i].eflag = self.snaps[j].eflag
             self.snaps[i].nelements = self.snaps[j].nelements
@@ -507,7 +508,7 @@ class mdump:
             self.snaps[i].eselect = self.snaps[j].eselect
             break
       if not self.snaps[i].eflag:
-        raise StandardError,"no elem connections found in previous snapshots"
+        raise Exception("no elem connections found in previous snapshots")
 
   # --------------------------------------------------------------------
   # iterate over selected snapshots
@@ -515,7 +516,7 @@ class mdump:
   def iterator(self,flag):
     start = 0
     if flag: start = self.iterate + 1
-    for i in xrange(start,self.nsnaps):
+    for i in range(start,self.nsnaps):
       if self.snaps[i].tselect:
         self.iterate = i
         return i,self.snaps[i].time,1
@@ -550,7 +551,7 @@ class mdump:
     
     tris = []
     nodes = snap.nodes
-    for i in xrange(snap.nelements):
+    for i in range(snap.nelements):
       if not snap.eselect[i]: continue
       element = snap.elements[i]
       if snap.evalueflag: evalue = snap.evalues[i]
@@ -699,9 +700,9 @@ class mdump:
   # --------------------------------------------------------------------
 
   def findtime(self,n):
-    for i in xrange(self.nsnaps):
+    for i in range(self.nsnaps):
       if self.snaps[i].time == n: return i
-    raise StandardError, "no step %d exists" % n
+    raise Exception("no step %d exists" % n)
 
   # --------------------------------------------------------------------
   # return maximum box size across all selected snapshots
@@ -751,7 +752,7 @@ class tselect:
       snap.tselect = 1
     data.nselect = len(data.snaps)
     data.eselect.all()
-    print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
+    print("%d snapshots selected out of %d" % (data.nselect,data.nsnaps))
 
   # --------------------------------------------------------------------
 
@@ -763,7 +764,7 @@ class tselect:
     data.snaps[i].tselect = 1
     data.nselect = 1
     data.eselect.all()
-    print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
+    print("%d snapshots selected out of %d" % (data.nselect,data.nsnaps))
 
   # --------------------------------------------------------------------
 
@@ -772,7 +773,7 @@ class tselect:
     for snap in data.snaps:
       snap.tselect = 0
     data.nselect = 0
-    print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
+    print("%d snapshots selected out of %d" % (data.nselect,data.nsnaps))
 
   # --------------------------------------------------------------------
 
@@ -788,7 +789,7 @@ class tselect:
       snap.tselect = 0
       data.nselect -= 1
     data.eselect.all()
-    print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
+    print("%d snapshots selected out of %d" % (data.nselect,data.nsnaps))
   
   # --------------------------------------------------------------------
 
@@ -797,14 +798,14 @@ class tselect:
     snaps = data.snaps
     cmd = "flag = " + teststr.replace("$t","snaps[i].time")
     ccmd = compile(cmd,'','single')
-    for i in xrange(data.nsnaps):
+    for i in range(data.nsnaps):
       if not snaps[i].tselect: continue
-      exec ccmd
+      exec(ccmd)
       if not flag:
         snaps[i].tselect = 0
         data.nselect -= 1
     data.eselect.all()
-    print "%d snapshots selected out of %d" % (data.nselect,data.nsnaps)
+    print("%d snapshots selected out of %d" % (data.nselect,data.nsnaps))
 
 # --------------------------------------------------------------------
 # element selection class
@@ -821,12 +822,12 @@ class eselect:
     if len(args) == 0:                           # all selected timesteps
       for snap in data.snaps:
         if not snap.tselect: continue
-        for i in xrange(snap.nelements): snap.eselect[i] = 1
+        for i in range(snap.nelements): snap.eselect[i] = 1
         snap.nselect = snap.nelements
     else:                                        # one timestep
       n = data.findtime(args[0])
       snap = data.snaps[n]
-      for i in xrange(snap.nelements): snap.eselect[i] = 1
+      for i in range(snap.nelements): snap.eselect[i] = 1
       snap.nselect = snap.nelements
 
   # --------------------------------------------------------------------
@@ -849,29 +850,29 @@ class eselect:
     if len(args) == 0:                           # all selected timesteps
       for snap in data.snaps:
         if not snap.tselect: continue
-        for i in xrange(snap.nelements):
+        for i in range(snap.nelements):
           if not snap.eselect[i]: continue
-          exec ccmd
+          exec(ccmd)
           if not flag:
             snap.eselect[i] = 0
             snap.nselect -= 1
-      for i in xrange(data.nsnaps):
+      for i in range(data.nsnaps):
         if data.snaps[i].tselect:
-          print "%d atoms of %d selected in first step %d" % \
-                (data.snaps[i].nselect,data.snaps[i].nelements,data.snaps[i].time)
+          print("%d atoms of %d selected in first step %d" % \
+                (data.snaps[i].nselect,data.snaps[i].nelements,data.snaps[i].time))
           break
-      for i in xrange(data.nsnaps-1,-1,-1):
+      for i in range(data.nsnaps-1,-1,-1):
         if data.snaps[i].tselect:
-          print "%d atoms of %d selected in last step %d" % \
-                (data.snaps[i].nselect,data.snaps[i].nelements,data.snaps[i].time)
+          print("%d atoms of %d selected in last step %d" % \
+                (data.snaps[i].nselect,data.snaps[i].nelements,data.snaps[i].time))
           break
 
     else:                                        # one timestep
       n = data.findtime(args[0])
       snap = data.snaps[n]
-      for i in xrange(snap.nelements):
+      for i in range(snap.nelements):
         if not snap.eselect[i]: continue
-        exec ccmd
+        exec(ccmd)
         if not flag:
           snap.eselect[i] = 0
           snap.nselect -= 1

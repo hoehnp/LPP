@@ -14,4 +14,4 @@ v.clipxlo(0.2)
 v.clipxhi(0.5)
 v.play()
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

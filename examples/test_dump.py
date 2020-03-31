@@ -27,12 +27,12 @@ d.set("$xyz = $x + $y + $z")
 d.spread("x",100,"color")
 d.clone(0,"color")
 
-print "Time",d.time()
+print("Time",d.time())
 color = d.atom(1,"color")
-print "Color of atom 1",color
+print("Color of atom 1",color)
 d.aselect.test("$id <= 10")
 color = d.vecs(1000,"color")
-print "Color of 1st 10 atoms in step 1000",color
+print("Color of 1st 10 atoms in step 1000",color)
 
 d.atype = "color"
 
@@ -42,13 +42,13 @@ while 1:
   if flag == -1: break
   time,box,atoms,bonds,tris,lines = d.viz(index)
   colors = [atom[1] for atom in atoms]
-  print time,colors
+  print(time,colors)
 
 d = dump("files/dump.peptide.*",0)
 while 1:
-  time = d.next()
+  time = next(d)
   if time < 0: break
 
-print "Incrementally read snaps =",d.nsnaps
+print("Incrementally read snaps =",d.nsnaps)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

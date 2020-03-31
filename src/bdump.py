@@ -62,7 +62,8 @@ time,box,atoms,bonds,tris,lines = b.viz(index)   return list of viz objects
 
 # Imports and external programs
 
-import sys, commands, re, glob, types
+from __future__ import absolute_import
+import sys, subprocess, re, glob, types
 from os import popen
 
 try:
@@ -92,7 +93,7 @@ class bdump:
     self.flist = []
     for word in words: self.flist += glob.glob(word)
     if len(self.flist) == 0 and len(list) == 1:
-      raise StandardError,"no bdump file specified"
+      raise Exception("no bdump file specified")
     
     if len(list) == 1:
       self.increment = 0
@@ -117,26 +118,26 @@ class bdump:
       snap = self.read_snapshot(f)
       while snap:
         self.snaps.append(snap)
-        print snap.time,
+        print(snap.time, end=' ')
         sys.stdout.flush()
         snap = self.read_snapshot(f)
 
       f.close()
-    print
+    print()
 
     # sort entries by timestep, cull duplicates
 
     self.snaps.sort(self.compare_time)
     self.cull()
     self.nsnaps = len(self.snaps)
-    print "read %d snapshots" % self.nsnaps
+    print("read %d snapshots" % self.nsnaps)
 
   # --------------------------------------------------------------------
   # read next snapshot from list of files
 
   def next(self):
 
-    if not self.increment: raise StandardError,"cannot read incrementally"
+    if not self.increment: raise Exception("cannot read incrementally")
 
     # read next snapshot in current file using eof as pointer
     # if fail, try next file
@@ -183,14 +184,14 @@ class bdump:
       if snap.natoms:
         words = f.readline().split()
         ncol = len(words)
-        for i in xrange(1,snap.natoms):
+        for i in range(1,snap.natoms):
           words += f.readline().split()
-        floats = map(float,words)
+        floats = list(map(float,words))
         if oldnumeric: atoms = np.zeros((snap.natoms,ncol),np.Float)
         else: atoms = np.zeros((snap.natoms,ncol),np.float)
         start = 0
         stop = ncol
-        for i in xrange(snap.natoms):
+        for i in range(snap.natoms):
           atoms[i] = floats[start:stop]
           start = stop
           stop += ncol
@@ -205,7 +206,7 @@ class bdump:
   
   def map(self,*pairs):
     if len(pairs) % 2 != 0:
-      raise StandardError, "bdump map() requires pairs of mappings"
+      raise Exception("bdump map() requires pairs of mappings")
     for i in range(0,len(pairs),2):
       j = i + 1
       self.names[pairs[j]] = pairs[i]-1
@@ -269,7 +270,7 @@ class bdump:
     # abs() of type since could be negative
     
     bonds = []
-    for i in xrange(snap.natoms):
+    for i in range(snap.natoms):
       atom = snap.atoms[i]
       bonds.append([int(atom[id]),abs(int(atom[type])),
                     int(atom[atom1]),int(atom[atom2])])

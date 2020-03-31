@@ -8,4 +8,4 @@ v.one()
 v.many()
 v.single(0,"tmp.single")
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")

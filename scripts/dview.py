@@ -10,7 +10,7 @@
 # main script
 
 if len(argv) < 2:
-  raise StandardError, "Syntax: dview.py dump.1 ..."
+  raise Exception("Syntax: dview.py dump.1 ...")
 
 files = ' '.join(argv[1:])
 

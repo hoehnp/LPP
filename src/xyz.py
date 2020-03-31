@@ -8,6 +8,11 @@
 
 # xyz tool
 
+# Imports and external programs
+
+from __future__ import absolute_import
+import sys
+
 oneline = "Convert LAMMPS snapshots to XYZ format"
 
 docstr = """
@@ -29,9 +34,7 @@ x.single(N,"file")      write snapshot for timestep N to file.xyz
 # Variables
 #   data = data file to read from
 
-# Imports and external programs
 
-import sys
 
 # Class definition
 
@@ -56,18 +59,18 @@ class xyz:
       if flag == -1: break
       time,box,atoms,bonds,tris,lines = self.data.viz(which)
 
-      print >>f,len(atoms)
-      print >>f,"Atoms"
+      print(len(atoms), file=f)
+      print("Atoms", file=f)
       for atom in atoms:
         itype = int(atom[1])
-        print >>f,itype,atom[2],atom[3],atom[4]
+        print(itype,atom[2],atom[3],atom[4], file=f)
       
-      print time,
+      print(time, end=' ')
       sys.stdout.flush()
       n += 1
       
     f.close()
-    print "\nwrote %d snapshots to %s in XYZ format" % (n,file)
+    print("\nwrote %d snapshots to %s in XYZ format" % (n,file))
       
   # --------------------------------------------------------------------
 
@@ -91,17 +94,17 @@ class xyz:
         file = root + str(n)  
       file += ".xyz"
       f = open(file,"w")
-      print >>f,len(atoms)
-      print >>f,"Atoms"
+      print(len(atoms), file=f)
+      print("Atoms", file=f)
       for atom in atoms:
         itype = int(atom[1])
-        print >>f,itype,atom[2],atom[3],atom[4]
-      print time,
+        print(itype,atom[2],atom[3],atom[4], file=f)
+      print(time, end=' ')
       sys.stdout.flush()
       f.close()
       n += 1
   
-    print "\nwrote %s snapshots in XYZ format" % n
+    print("\nwrote %s snapshots in XYZ format" % n)
   
   # --------------------------------------------------------------------
 
@@ -113,9 +116,9 @@ class xyz:
     which = self.data.findtime(time)
     time,box,atoms,bonds,tris,lines = self.data.viz(which)
     f = open(file,"w")
-    print >>f,len(atoms)
-    print >>f,"Atoms"
+    print(len(atoms), file=f)
+    print("Atoms", file=f)
     for atom in atoms:
       itype = int(atom[1])
-      print >>f,itype,atom[2],atom[3],atom[4]
+      print(itype,atom[2],atom[3],atom[4], file=f)
     f.close()

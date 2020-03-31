@@ -12,7 +12,7 @@ m.tselect.all()
 m.tselect.test("$t >= 100 and $t <= 200")
 m.delete()
 
-print "Time",m.time()
+print("Time",m.time())
 
 m.map(2,"spin")
 m.etype = "spin"
@@ -23,13 +23,13 @@ while 1:
   if flag == -1: break
   time,box,atoms,bonds,tris,lines = m.viz(index)
   colors = [tri[1] for tri in tris]
-  print time,colors
+  print(time,colors)
 
 m = dump("files/mesh.grain",0)
 while 1:
-  time = m.next()
+  time = next(m)
   if time < 0: break
 
-print "Incrementally read snaps =",m.nsnaps
+print("Incrementally read snaps =",m.nsnaps)
 
-print "all done ... type CTRL-D to exit Pizza.py"
+print("all done ... type CTRL-D to exit Pizza.py")
