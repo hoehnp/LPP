@@ -63,6 +63,7 @@ p.write("data.patch")      write out system to LAMMPS data file
 
 # Imports and external programs
 
+from __future__ import absolute_import
 from math import sqrt,pi,cos,sin
 from data import data
 

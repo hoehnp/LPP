@@ -69,6 +69,7 @@ l.owrap(...)		          wrap lines to same image as their atoms
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, subprocess, re, glob, types
 from os import popen
 

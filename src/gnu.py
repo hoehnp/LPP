@@ -84,6 +84,7 @@ g.curve(N,'r')                 set color of curve N
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import types, os
 
 try: from DEFAULTS import PIZZA_GNUPLOT

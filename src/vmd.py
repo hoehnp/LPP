@@ -14,6 +14,12 @@
 #   open a pipe to the executable,
 #   and feed it Tcl command lines one at a time
 
+# Imports and external programs
+
+from __future__ import absolute_import
+import types, os
+import numpy
+
 oneline = "Control VMD from python"
 
 docstr = """
@@ -40,10 +46,7 @@ v.debug([True|False])	       display generated VMD script commands?
 # History
 #   11/10, Axel Kohlmeyer (Temple U): original version
 
-# Imports and external programs
 
-import types, os
-import numpy
 
 try: from DEFAULTS import PIZZA_VMDNAME
 except: PIZZA_VMDNAME = "vmd"

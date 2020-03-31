@@ -64,6 +64,7 @@ index,time,flag = p.iterator(1)
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, types, glob, urllib.request, urllib.parse, urllib.error
 
 # Class definition

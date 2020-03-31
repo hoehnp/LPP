@@ -52,6 +52,7 @@ e.single(N)          same args as one() prepended by N, but write a single snap
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, types
 
 # Class definition

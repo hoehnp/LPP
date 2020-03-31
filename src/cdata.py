@@ -156,6 +156,7 @@ time,box,atoms,bonds,tris,lines = c.viz(index)   return list of viz objects
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, glob
 from os import popen
 from math import sqrt,pi,cos,sin,fabs

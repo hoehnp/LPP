@@ -2,6 +2,9 @@
 # requires files/data.micelle
 # creates tmp.data
 
+from __future__ import absolute_import
+from builtins import range
+
 d = data("files/data.micelle")
 d.map(1,"id",3,"type",4,"x",5,"y",6,"z")
 coeffs = d.get("Masses")

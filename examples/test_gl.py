@@ -2,6 +2,9 @@
 # requires files/dump.kinase
 # creates tmp*.png
 
+from __future__ import absolute_import
+from builtins import range
+
 d = dump("files/dump.kinase")
 g = gl(d)
 

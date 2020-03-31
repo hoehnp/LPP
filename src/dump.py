@@ -186,6 +186,7 @@ import sys, subprocess, re, glob, types
 from os import popen
 from math import *             # any function could be used by set()
 import os
+import functools
 
 try:
   import numpy as np
@@ -227,7 +228,7 @@ class dump:
       # check whether to output or not
       if "debugMode" in dictionary: outputfl = dictionary["debugMode"]
       
-      if outputfl: print("number of subprocess:", os.getpid()
+      if outputfl: print("number of subprocess:", os.getpid())
       
       self.flist = dictionary["filelist"]
       self.multiprocflag = 1
@@ -239,7 +240,7 @@ class dump:
       self.flist = []
       for word in words: self.flist += glob.glob(word)
       if len(self.flist) == 0 and len(input) == 1:
-        raise StandardError,"no dump file specified"
+        raise Exception("no dump file specified")
       
       if len(input) == 1:
         self.increment = 0
@@ -260,7 +261,7 @@ class dump:
     outputfl = True
     if "output" in kwargs: outputfl = kwargs["output"]
     
-    if outputfl: print("reading dump file..."
+    if outputfl: print("reading dump file...")
 
     for i, file in enumerate(self.flist):
       if file[-3:] == ".gz":
@@ -270,7 +271,7 @@ class dump:
       snap = self.read_snapshot(f)
       while snap:
         self.snaps.append(snap)
-        if outputfl: print(snap.time,
+        if outputfl: print(snap.time,end='')
         self.fileNums.append(snap.time)
         sys.stdout.flush()
         snap = self.read_snapshot(f)
@@ -280,7 +281,7 @@ class dump:
 
     # sort entries by timestep, cull duplicates
 
-    self.snaps.sort(self.compare_time)
+    self.snaps.sort(key = functools.cmp_to_key(self.compare_time))
     self.fileNums.sort()
     self.cull()
     self.nsnaps = len(self.snaps)
@@ -330,15 +331,15 @@ class dump:
       snap = self.read_snapshot(f)
       if not snap:
         self.nextfile += 1
-	if self.nextfile == len(self.flist): return -1
+        if self.nextfile == len(self.flist): return -1
         f.close()
-	self.eof = 0
-	continue
+        self.eof = 0
+        continue
       self.eof = f.tell()
       f.close()
       try:
         self.findtime(snap.time)
-	continue
+        continue
       except: break
 
     # select the new snapshot with all its atoms
@@ -444,7 +445,7 @@ class dump:
     ndel = i = 0
     while i < self.nsnaps:
       if not self.snaps[i].tselect:
-	del self.fileNums[i]
+        del self.fileNums[i]
         del self.snaps[i]
         self.nsnaps -= 1
         ndel += 1

@@ -1,5 +1,8 @@
 # movie of flow around obstacle
 
+from __future__ import absolute_import
+from builtins import range
+
 d = dump("dump.flow")
 d.map(1,"id",2,"type",3,"x",4,"y",5,"z",6,"vx",7,"vy")
 d.set("$ke = sqrt($vx*$vx + $vy*$vy)")

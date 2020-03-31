@@ -6,6 +6,7 @@
 # certain rights in this software.  This software is distributed under 
 # the GNU General Public License.
 
+
 # animate tool
 
 oneline = "Animate a series of image files"
@@ -45,8 +46,10 @@ a.delay(0.4)     	      set delay slider
 #   delay_value = delay between frames (secs)
 #   delay_msec = delay in millisec
 
+
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, os, subprocess, re, glob
 from tkinter import *
 from ImageTk import PhotoImage

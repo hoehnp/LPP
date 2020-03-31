@@ -112,6 +112,7 @@ s.thick = 2.0               pixel thickness of black atom border
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, os, subprocess, re
 from vizinfo import vizinfo
 from math import sqrt,atan,cos,sin,fabs

@@ -62,6 +62,7 @@ time,box,atoms,bonds,tris,lines = b.viz(index)   return list of viz objects
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, subprocess, re, glob, types
 from os import popen
 

@@ -43,6 +43,7 @@ e_vdwl,e_coul = p.single(rsq,itype,jtype,q1,q2,...)   compute LJ/Coul energy
 
 # Imports and external programs
 
+from __future__ import absolute_import
 from math import sqrt
 
 # Class definition

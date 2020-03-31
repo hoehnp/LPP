@@ -48,6 +48,7 @@ p.save()                save currently selected plot to file.eps
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, re, glob, time
 from tkinter import *
 

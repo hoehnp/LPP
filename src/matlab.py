@@ -93,6 +93,7 @@ m.curve(N,'b','-','v')         set color, line style, symbol of curve N
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import types, os
 
 try: from DEFAULTS import PIZZA_MATLAB

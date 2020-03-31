@@ -48,6 +48,7 @@ i.montage("-geometry 512x512","i*.png","new.png")       1st arg is switch
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, os, subprocess, re, glob
 from math import *
 from tkinter import *

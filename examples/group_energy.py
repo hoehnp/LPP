@@ -5,6 +5,9 @@
 
 # return distance sq between 2 atoms with PBC
 
+from __future__ import absolute_import
+from builtins import range
+
 def distance(box,x1,y1,z1,x2,y2,z2):
   
   delx = x2 - x1

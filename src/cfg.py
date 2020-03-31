@@ -36,6 +36,7 @@ c.single(N,"file")      write snapshot for timestep N to file.cfg
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys
 
 # Class definition

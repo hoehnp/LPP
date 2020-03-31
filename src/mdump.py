@@ -126,6 +126,7 @@ m.etype = "color"                          set column returned as "type" by viz
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, subprocess, re, glob, types
 from os import popen
 from math import *             # any function could be used by set()

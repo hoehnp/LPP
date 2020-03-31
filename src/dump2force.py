@@ -27,6 +27,7 @@ and dump match the format here - this will be checked in future!
 
 """
 
+from __future__ import absolute_import
 from evtk.vtk import VtkFile, VtkGroup, VtkUnstructuredGrid
 from bdump import bdump
 import numpy as np

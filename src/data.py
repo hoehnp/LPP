@@ -72,6 +72,7 @@ d.write("data.new")             write a LAMMPS data file
 
 # Imports and external programs
 
+from __future__ import absolute_import
 from os import popen
 
 try: tmp = PIZZA_GUNZIP

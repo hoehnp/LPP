@@ -42,6 +42,7 @@ l.write("file.txt","col1",7,...)    write listed vectors to a file
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import types
 
 # Class definition

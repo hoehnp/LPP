@@ -69,6 +69,7 @@ t.owrap(...)		          wrap tris to same image as their atoms
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, subprocess, re, glob, types
 from math import sqrt
 from os import popen

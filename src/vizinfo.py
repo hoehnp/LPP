@@ -18,6 +18,7 @@
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import types
 
 # Class definition

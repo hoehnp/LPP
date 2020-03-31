@@ -1,6 +1,9 @@
 # simple test of gnu tool
 # creates tmp.eps
 
+from __future__ import absolute_import
+from builtins import range
+
 g = gnu()
 
 g("plot sin(x) with lines")

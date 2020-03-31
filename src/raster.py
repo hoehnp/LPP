@@ -110,6 +110,7 @@ colors["nickname"] = [R,G,B]       set new RGB values from 0 to 255
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, os, subprocess, re
 from vizinfo import vizinfo
 from math import fabs,atan,cos,sin

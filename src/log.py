@@ -52,6 +52,7 @@ l.write("file.txt","Time","PE",...)  write listed vectors to a file
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, re, glob
 from os import popen
 

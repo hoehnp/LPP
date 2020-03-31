@@ -1,6 +1,9 @@
 # simple test of matlab tool
 # creates tmp.eps
 
+from __future__ import absolute_import
+from builtins import range
+
 m = matlab()
 
 a = list(range(10))

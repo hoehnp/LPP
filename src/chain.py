@@ -54,6 +54,7 @@ c.write("data.file")        write out all built chains to LAMMPS data file
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import math
 from data import data
 

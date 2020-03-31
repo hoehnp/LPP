@@ -66,6 +66,7 @@ v.saveall()		   toggle save-all checkbox
 
 # Imports and external programs
 
+from __future__ import absolute_import
 from tkinter import *
 import types
 

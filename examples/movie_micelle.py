@@ -1,5 +1,8 @@
 # movie of self-assembling micelles
 
+from __future__ import absolute_import
+from builtins import range
+
 d = dump("dump.micelle")
 
 s = svg(d)

@@ -40,6 +40,7 @@ r.run(N,"new.rasmol","old.rasmol")    type quit to save RasMol script file
 
 # Imports and external programs
 
+from __future__ import absolute_import
 import sys, os, subprocess, re, types
 from pdbfile import pdbfile
 

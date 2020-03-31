@@ -8,6 +8,11 @@
 
 # xyz tool
 
+# Imports and external programs
+
+from __future__ import absolute_import
+import sys
+
 oneline = "Convert LAMMPS snapshots to XYZ format"
 
 docstr = """
@@ -29,9 +34,7 @@ x.single(N,"file")      write snapshot for timestep N to file.xyz
 # Variables
 #   data = data file to read from
 
-# Imports and external programs
 
-import sys
 
 # Class definition
 
